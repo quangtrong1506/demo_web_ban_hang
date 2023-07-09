@@ -14,6 +14,7 @@ function route(app) {
     app.get('/san-pham', siteRouter);
     app.get('/lien-he', siteRouter);
     app.get('/tin-tuc', siteRouter);
+    app.get('/home', siteRouter);
     app.get('/:slug', siteRouter);
     app.get('/', siteRouter);
 
