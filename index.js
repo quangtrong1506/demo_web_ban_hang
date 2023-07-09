@@ -23,10 +23,10 @@ db.connect();
 //set view engine
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', path.join(appRoot + '\\views'));
+app.set('views', path.join(appRoot + '/views'));
 // path.dirname(__dirname)
 // set public directory
-app.use(express.static(path.join(appRoot + '\\public')));
+app.use(express.static(path.join(appRoot + '/public')));
 
 //router
 const route = require('./src/routes');
