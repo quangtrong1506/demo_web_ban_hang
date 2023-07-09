@@ -692,6 +692,7 @@ class apiController {
         res.json({
             code: 404,
             message: 'API không tồn tại',
+            key: 'abc',
             path: appRoot,
         });
     }
