@@ -3,10 +3,13 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
-    "scripts": {
-        "start": "nodemon index.js"
+    "engines": {
+        "node": "14.x"
     },
-    "author": "",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "author": "Quang Trong",
     "license": "ISC",
     "dependencies": {
         "app-root-path": "^3.1.0",
