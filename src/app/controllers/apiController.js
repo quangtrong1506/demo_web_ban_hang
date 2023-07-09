@@ -1,5 +1,6 @@
 const { removeToneVietNamese, getD, getID } = require('../../ult/string');
 const fs = require('fs-extra');
+var appRoot = require('app-root-path');
 
 const path = require('path');
 
@@ -691,6 +692,7 @@ class apiController {
         res.json({
             code: 404,
             message: 'API không tồn tại',
+            path: appRoot,
         });
     }
 }
