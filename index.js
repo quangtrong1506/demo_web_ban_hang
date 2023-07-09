@@ -23,6 +23,7 @@ db.connect();
 //set view engine
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
+console.log(path.join(appRoot + '/views'));
 app.set('views', path.join(appRoot + '/views'));
 // path.dirname(__dirname)
 // set public directory
