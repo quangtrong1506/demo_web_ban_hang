@@ -1,0 +1,161 @@
+<main class='app-content'>
+    <div class='app-title'>
+        <ul class='app-breadcrumb breadcrumb side'>
+            <li class='breadcrumb-item active'><a href='#'><b>Chi tiết đơn hàng</b></a></li>
+        </ul>
+        <div id='clock'></div>
+    </div>
+    <div class='row'>
+        <div class="col-lg-12 col-sm-12">
+          <div class="row" style="margin-top: 30px;">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header" style="font-size: 20px;">
+                  Thông tin cá nhân
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Họ & Tên: <span>{{order.userName}}</span></li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-6 col-12">Số điện thoại: {{order.phone}}</div>
+                      <div class="col-md-6 col-12">Email: {{order.email}}</div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">Địa chỉ: {{order.address}}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <h4 style="margin: 30px 0 10px 0;">Danh sách sản phẩm</h4>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên Sản phẩm</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                 {{#each order.products}}
+                  <tr>
+                    <th scope="row">{{inc @index}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.total}}</td>
+                  </tr>
+                 {{/each}}
+                 <tr>
+                    <th scope="row"> </th>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">Tổng: </td>
+                    <td style="color: var(--price); font-size: 18px; font-weight: 400;">{{order.sum}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-12">
+              <div class="card" style="margin-top: 30px;">
+                <div class="card-header">
+                  <h4>Trạng thái đơn hàng</h4>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">Ngày tạo: <span style="color: black; font-weight: 500;">{{order.createdAt}}</span></p>
+                  <p class="card-text">Tổng tiền hàng: <span style="color: black; font-weight: 500;">{{order.sum}}</span></p>
+                  <p class="card-text">Giảm giá: <span style="color: black; font-weight: 500;">{{order.discount}}</span></p>
+                  <p class="card-text">Tiền vận chuyển: <span style="color: black; font-weight: 500;">{{order.ship}}</span></p>
+                  <p class="card-text">Thành tiền:<span style="color: black; font-weight: 500;"> {{order.total}}</span></p>
+                  <p class="card-text">Trạng thái: 
+                    {{#if order.isHuyHang}}
+                        <span style="color: red; font-weight: 500;">{{order.status}}</span>
+                    {{else}}
+                    <span style="color: black; font-weight: 500;">{{order.status}}</span>
+                    {{/if}}
+                    </p>
+                  {{#if order.isHuyHang}}
+                  <p class="card-text">Lý do hủy hàng: <span style="color: red; font-weight: 500;">{{order.liDoHuyHang}}</span></p>
+                  {{/if}}
+                  <p class="card-text">Ghi chú: <span style="color: black; font-weight: 500;">{{order.note}}</span></p>
+                  {{#if order.canConfirm}}
+                  <a href="javascript:" onclick="updateOrder('{{order.id}}','Chuẩn bị hàng')" class="btn " style="background-color: green; color: white;">Xác nhận đơn hàng</a>
+                  {{/if}}
+                  {{#if order.canCancel}}
+                  <a href="javascript:" onclick="updateOrder('{{order.id}}','Đã hủy')" class="btn " style="background-color: red; color: white;">Hủy đơn hàng</a>
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</main>
+ <style>
+    .my-orders {
+      width: calc(100% - 40px);
+      margin: 30px 10px
+    }
+
+    .my-orders .header {
+      font-size: 20px;
+      background-color: white !important;
+      border-bottom: 1px solid rgb(126, 126, 126) !important;
+    }
+
+    .my-orders tr {
+      margin: 10px 0;
+    }
+
+    .my-orders tr:nth-child(odd) {
+      background-color: rgb(223, 223, 223);
+    }
+
+    .my-orders td,
+    .my-orders th {
+      text-align: center;
+      flex: 1;
+    }
+
+    .name-product {
+      max-width: 100%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .my-orders a:hover {
+      text-decoration: underline !important;
+    }
+  </style>
+  <script>
+    function updateOrder(id,status){
+         var settings = {
+                "url": "/admin/edit-order",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({
+                    "id": id,
+                    "status": status,
+                }),
+                };
+                $.ajax(settings).done(function (response) {
+                if(response.code!= 401){
+                    Swal.fire({
+                        title:"Đã chỉnh sửa trạng thái thành công",
+                        icon:"success"
+                    })
+                    location.reload()
+                }
+                else Swal.fire({
+                        title:response.message,
+                        icon:"error"
+                    })
+            });
+    }
+  </script>

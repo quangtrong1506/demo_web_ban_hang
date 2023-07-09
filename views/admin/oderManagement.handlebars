@@ -1,0 +1,179 @@
+<main class='app-content'>
+    <div class='app-title'>
+        <ul class='app-breadcrumb breadcrumb side'>
+            <li class='breadcrumb-item active'><a href='#'><b>Danh sách đơn hàng</b></a></li>
+        </ul>
+        <div id='clock'></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div class='tile'>
+                <div class='tile-body'>
+                    <div class='row element-button'>
+                        {{!-- <div class='col-sm-2'>
+                            <a
+                                class='btn btn-add btn-sm'
+                                href='form-add-don-hang.html'
+                                title='Thêm'><i class='fas fa-plus'></i>
+                                Tạo mới đơn hàng</a>
+                        </div> --}}
+
+                    </div>
+                    <table class='table table-hover table-bordered' id='sampleTable'>
+                        <thead>
+                            <tr>
+                                <th width='10'>STT</th>
+                                <th>ID đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th style="max-width: 400px;">Sản phẩm</th>
+                                <th>Tổng tiền</th>
+                                <th>Tình trạng</th>
+                                <th>Tính năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each orders}}
+                            <tr>
+                                <td width='10'>{{inc @index}}</td>
+                                <td>#{{this.id}}</td>
+                                <td>{{this.userName}}</td>
+                                <td style="position: relative; max-width: 400px;">
+                                    {{#each this.products}}
+                                   <span class="order-product">
+                                        <span class="order-product-name" >
+                                            {{this.name}}
+                                        </span>
+                                        <span class="order-product-quantity">×{{this.quantity}}</span>
+                                   </span>
+                                    <br>
+                                    {{/each}}
+                                </td>
+                                <td>{{this.totalText}}</td>
+                                <td>
+                                    {{#if check.a}}
+                                         <span id="status-{{this.id}}" class="badge bg-success">{{this.status}}</span>
+                                    {{else}}
+                                    {{#if check.c}}
+                                        <span id="status-{{this.id}}" class="badge bg-warning">{{this.status}}</span>
+                                    {{else}}
+                                    {{#if check.b}}
+                                        <span id="status-{{this.id}}" class="badge bg-danger">{{this.status}}</span>
+                                    {{else}}
+                                        <span id="status-{{this.id}}" class="badge bg-info">{{this.status}}</span>
+                                    {{/if}}
+                                    {{/if}}
+                                    {{/if}}
+                                </td>
+                                <td>
+                                    {{#if check.a}}
+                                    {{else}}
+                                    {{#if check.b}}
+                                    {{else}}
+                                    <button
+                                        class='btn btn-primary btn-sm edit'
+                                        type='button'
+                                        title='Sửa'
+                                        onclick="edit('{{this.id}}')"
+                                        >
+                                        <i class='fa fa-edit'></i>
+                                    </button>
+                                    {{/if}}
+                                    {{/if}}
+                                    <a href="/admin/chi-tiet-don-hang?id={{this.id}}">
+                                            <button
+                                            class='btn btn-sm edit'
+                                            type='button'
+                                            title='Xem chi tiết'
+                                            >
+                                            <i class='fa fa-eye'></i>
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+    .order-product{
+        display: inline-block;
+        width: 100%;
+        position: relative;
+        border-bottom: 1px solid #eaeaea;
+        line-height: 26px;
+        margin: 3px 0;
+    }
+    .order-product-name{
+        display: inline-block;
+        max-width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; 
+    }
+    .order-product-quantity{
+        position: absolute;
+        right: 12px;
+        top: 0;
+        display: block;
+    }
+</style>
+
+<script>
+
+    function edit(id){
+        Swal.fire({
+        title: 'Chỉnh sửa trạng thái của đơn hàng',
+        html: `
+        <select id="status-selector" style="width: 80%; min-height: 30px;">
+            <option value="Đã hủy">Hủy đơn hàng</option>
+            <option value="Chuẩn bị hàng">Đang chuẩn bị hàng</option>
+            <option value="Đang giao hàng">Đang giao hàng</option>
+            <option value="Hoàn thành">Hoàn thành</option>
+        </select>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Xác nhận',
+        cancelButtonText: 'Hủy',
+        showLoaderOnConfirm: true,
+        }).then((result) => {
+        if (result.isConfirmed) {
+            var status = document.getElementById("status-selector").value;
+            console.log(status)
+            var settings = {
+                "url": "/admin/edit-order",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify({
+                    "id": id,
+                    "status": status,
+                }),
+                };
+                $.ajax(settings).done(function (response) {
+                if(response.code!= 401){
+                    Swal.fire({
+                        title:"Đã chỉnh sửa trạng thái thành công",
+                        icon:"success"
+                    })
+                    document.getElementById("status-"+id).innerHTML = status;
+                }
+                else Swal.fire({
+                        title:response.message,
+                        icon:"error"
+                    })
+            });
+        }
+        })
+    }
+</script>
+<style>
+    table td {
+        padding: 8px !important;
+    }
+</style>

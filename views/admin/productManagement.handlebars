@@ -1,0 +1,99 @@
+    <main class="app-content">
+        <div class="app-title">
+            <ul class="app-breadcrumb breadcrumb side">
+                <li class="breadcrumb-item active"><a href="#"><b>Danh sách sản phẩm</b></a></li>
+            </ul>
+            <div id="clock"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <div class="tile-body">
+                        <div class="row element-button">
+                            <div class="col-sm-2">
+                              <a class="btn btn-add btn-sm" href="them-san-pham" title="Thêm"><i class="fas fa-plus"></i>
+                                Tạo mới sản phẩm</a>
+                            </div>
+                          </div>
+                        <table class="table table-hover table-bordered" id="product-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Ảnh</th>
+                                    <th>Số lượng</th>
+                                    <th>Tình trạng</th>
+                                    <th>Giá tiền</th>
+                                    <th>Danh mục</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each product}}
+                                <tr>
+                                    <td>{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td><img src="/images/product/{{this.img}}" alt="" width="100px;"></td>
+                                    <td>{{this.quantity}}</td>
+                                    <td>
+                                        {{#if statusCheck.a}}
+                                         <span class="badge bg-success">{{this.status}}</span>
+                                        {{else}}
+                                        {{#if statusCheck.b}}
+                                            <span class="badge bg-warning">{{this.status}}</span>
+                                        {{else}}
+                                        {{#if statusCheck.c}}
+                                            <span class="badge bg-danger">{{this.status}}</span>
+                                        {{else}}
+                                        {{#if statusCheck.d}}
+                                            <span class="badge bg-danger">{{this.status}}</span>
+                                        {{else}}
+                                            <span class="badge bg-info">{{this.status}}</span>
+                                        {{/if}}
+                                        {{/if}}
+                                        {{/if}}
+                                        {{/if}}
+                                        
+                                        {{#if this.sale}}
+                                            <span class="badge " style="background-color: var(--orange); margin-top: 5px;">Đang giảm giá</span>
+                                        {{/if}}
+                                        </td>
+                                    <td>{{this.price}}</td>
+                                    <td>{{this.categories}}</td>
+                                    <td width="10">
+                                        <button class="btn btn-primary btn-sm" type="button"><a href="chinh-sua-san-pham?id={{this.id}}"><i class="fas fa-edit"></i></a></button>
+                                        <button class="btn btn-primary btn-sm trash" type="button" title="Xóa"
+                                            onclick='deleteProduct(this,"{{this.id}}","{{this.name}}")'><i class="fas fa-trash-alt"></i> 
+                                        </button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        function deleteProduct(r,id,name) {
+            var x = confirm("Bạn muốn xóa sản phẩm: "+name);
+            if(x)
+            {
+                $.post("/api/remove-product",{id:id},function(data,status){
+                    console.log(data)
+                    alert(data.message)
+                    if(data.status != 401)
+                        deleteRow(r);
+                })
+                
+            }
+        }
+        function deleteRow(r) {
+            var i = r.parentNode.parentNode.rowIndex;
+            document.getElementById("product-table").deleteRow(i);
+            }
+    </script>
+
+

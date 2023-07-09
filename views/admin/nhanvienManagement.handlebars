@@ -1,0 +1,94 @@
+    <main class="app-content">
+        <div class="app-title">
+            <ul class="app-breadcrumb breadcrumb side">
+                <li class="breadcrumb-item active"><a href="#"><b>Danh sách sản phẩm</b></a></li>
+            </ul>
+            <div id="clock"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <div class="tile-body">
+                        <div class="row element-button">
+                            <div class="col-sm-2">
+                              <a class="btn btn-add btn-sm" href="them-nhan-vien" title="Thêm"><i class="fas fa-plus"></i>
+                                Thêm nhân viên</a>
+                            </div>
+                          </div>
+                        <table class="table table-hover table-bordered" id="product-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên nhân viên</th>
+                                    <th>Ảnh</th>
+                                    <th>Điện thoại</th>
+                                    <th>Email</th>
+                                    <th>Chức vụ</th>
+                                    <th width="50" style="text-align: center;">Lương cơ bản</th>
+                                    <td width="10"></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each nhanviens}}
+                                <tr>
+                                    <td>#{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td width="20">
+                                        <img class="avatar" src="/admin/images/{{this.avatar}}" alt="">
+                                    </td>
+                                    <td>{{this.phone}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>{{this.chucvu}}</td>
+                                    <td width="50" style="text-align: center; ">{{this.luong}}</td>
+                                    <td width="10">
+                                         <button class="btn btn-primary btn-sm" type="button"><a href="chinh-sua-thong-tin-nhan-vien?id={{this.id}}"><i class="fas fa-edit"></i></a></button>
+                                        <button class="btn btn-primary btn-sm trash" type="button" title="Xóa"
+                                            onclick='deleteNhanVien("{{this.id}}","{{this.name}}")'><i class="fas fa-trash-alt"></i> 
+                                        </button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <style>
+        img.avatar{
+            object-fit: contain;
+            max-width: 100px;
+        }
+    </style>
+
+<script>
+    function deleteNhanVien(id,name){
+        var x = confirm("Xác nhận xóa nhân viên\n"+name);
+        if(!x) return;
+        var form= new FormData()
+        form.append('id', id);
+        var settings = {
+            url: '/admin/remove-nhan-vien',
+            method: 'POST',
+            timeout: 0,
+            processData: false,
+            mimeType: 'multipart/form-data',
+            contentType: false,
+            data: form,
+        };
+        $.ajax(settings)
+        .done((data) => {
+            data = JSON.parse(data);
+            var code = data.code,
+                message = data.message;
+            alert(message);
+            if (code != 401)
+              window.location = 'quan-ly-nhan-vien';
+        })
+        .fail((e) => {
+            console.log(e);
+            alert('Error!\nMessage: ' + e.message);
+        });
+    }
+</script>

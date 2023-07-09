@@ -1,0 +1,434 @@
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<style>
+    .Choicefile {
+      display: block;
+      background: #14142B;
+      border: 1px solid #fff;
+      color: #fff;
+      width: 150px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 5px 0px;
+      border-radius: 5px;
+      font-weight: 500;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .Choicefile:hover {
+      text-decoration: none;
+      color: white;
+    }
+
+    #uploadfile,
+    .removeimg {
+      display: none;
+    }
+
+    #thumbbox {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .removeimg {
+      height: 25px;
+      position: absolute;
+      background-repeat: no-repeat;
+      top: 5px;
+      left: 5px;
+      background-size: 25px;
+      width: 25px;
+      /* border: 3px solid red; */
+      border-radius: 50%;
+
+    }
+
+    .removeimg::before {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      content: '';
+      border: 1px solid red;
+      background: red;
+      text-align: center;
+      display: block;
+      margin-top: 11px;
+      transform: rotate(45deg);
+    }
+
+    .removeimg::after {
+      /* color: #FFF; */
+      /* background-color: #DC403B; */
+      content: '';
+      background: red;
+      border: 1px solid red;
+      text-align: center;
+      display: block;
+      transform: rotate(-45deg);
+      margin-top: -2px;
+      
+    }
+    .ck-editor__editable_inline{
+      min-height: 200px;
+    }
+  </style>
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/quan-ly-san-pham"> Danh sách sản phẩm</a></li>
+        <li class="breadcrumb-item">Thêm sản phẩm</li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h3 class="tile-title">Tạo mới sản phẩm</h3>
+          <div class="tile-body">
+            <div class="row element-button">
+              <div class="col-sm-2">
+                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#addNhaCungCap"><i
+                    class="fas fa-folder-plus"></i> Thêm nhà cung cấp</a>
+              </div>
+              <div class="col-sm-2">
+                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#adddanhmuc"><i
+                    class="fas fa-folder-plus"></i> Thêm danh mục</a>
+              </div>
+              <div class="col-sm-2">
+                <a class="btn btn-add btn-sm" data-toggle="modal" data-target="#addtinhtrang"><i
+                    class="fas fa-folder-plus"></i> Thêm tình trạng</a>
+              </div>
+            </div>
+            <form class="row">
+              <div class="form-group col-md-3">
+                <label class="control-label">Mã sản phẩm </label>
+                <input id="input-id" class="form-control" type="text" placeholder="Nếu không nhập sẽ tự sinh">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Tên sản phẩm</label>
+                <input id="input-name" class="form-control" type="text">
+              </div>
+
+
+              <div class="form-group  col-md-3">
+                <label class="control-label">Số lượng</label>
+                <input id="input-quantity" class="form-control" type="number" min="0" oninput="onChangeQuantity(event)">
+              </div>
+              <div class="form-group col-md-3 ">
+                <label for="input-status" class="control-label">Tình trạng</label>
+                <select id="input-status" class="form-control" >
+                  <option value="-1">-- Chọn tình trạng --</option>
+                  {{#each listItemStatus}}
+                <option value="{{this.name}}">{{this.name}}</option>
+                {{/each}}
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="input-categories" class="control-label">Danh mục</label>
+                <select class="form-control" id="input-categories">
+                  <option value="-1">-- Chọn danh mục --</option>
+                  {{#each listCategories}}
+                <option value="{{this.name}}">{{this.name}}</option>
+                {{/each}}
+                </select>
+              </div>
+              <div class="form-group col-md-3 ">
+                <label for="input-supplier" class="control-label">Nhà cung cấp</label>
+                <select class="form-control" id="input-supplier">
+                  <option value="-1">-- Chọn nhà cung cấp --</option>
+                {{#each listSupplier}}
+                <option value="{{this.name}}">{{this.name}}</option>
+                {{/each}}
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Giá bán</label>
+                <input id="input-price" class="form-control" type="number" min="0" oninput="onChangeSalePrice()">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Giá nhập</label>
+                <input id="input-importPrice" class="form-control" type="number" min="0">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Giảm giá</label>
+                <input id="input-salePrice" class="form-control" type="number" min="0" oninput="onChangeSalePrice()">
+              </div>
+               <div class="form-group col-md-3">
+                <label class="control-label">Phần trăm</label>
+                <span id="presentSale" style="display:inline-block;width:100%;margin-top:10px">0%</span>
+              </div>
+              <div class="form-group col-md-12">
+                <label class="control-label">Ảnh sản phẩm</label>
+                <div id="my-image-upload" class="row"></div>
+                <div id="myfileupload">
+                  <input type="file" id="uploadfile" name="ImageUpload" onchange="readURL(this);"  accept="image/jpg, image/png, image/jpeg" multiple/>
+                  <label class="Choicefile" for="uploadfile"><i class="fas fa-cloud-upload-alt"></i><span> Thêm ảnh</span></label>
+                </div>
+                
+              </div>
+              <div class="form-group col-md-12">
+                <label class="control-label">Mô tả sản phẩm</label>
+                <div id="mota" style="display: none;"></div>
+              </div>
+          </div>
+          <button class="btn btn-save" type="button" onclick="saveProduct()">Lưu lại</button>
+          <a class="btn btn-cancel" href="quan-ly-san-pham">Hủy bỏ</a>
+        </div>
+        </div>
+    </div>
+  </main>
+
+
+  <!--
+  MODAL Nhà cung cấp
+-->
+  <div class="modal fade" id="addNhaCungCap" tabindex="-1" role="dialog" aria-labelledby="addNhaCungCapTitle"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 10px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span class="thong-tin-thanh-toan">
+                <h5>Thêm mới nhà cung cấp</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Nhập tên nhà cung cấp mới</label>
+              <input class="form-control input-name" name="name" type="text" autocomplete="off" required>
+              <label class="control-label mt-2">Địa chỉ</label>
+              <input class="form-control input-address" type="text" autocomplete="off" name="address" >
+              <label class="control-label mt-2">Mô tả</label>
+              <input class="form-control input-description" type="text" autocomplete="off" name="description" >
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Danh sách nhà cung cấp hiện đang có</label>
+              <ul class="list-ncc" style="padding-left: 20px;">
+                {{#each listSupplier}}
+                <li>{{this.name}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+MODAL
+-->
+
+
+
+  <!--
+  MODAL DANH MỤC
+-->
+  <div class="modal fade" id="adddanhmuc" tabindex="-1" role="dialog" aria-labelledby="addNhaCungCapTitle"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 10px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span class="thong-tin-thanh-toan">
+                <h5>Thêm mới danh mục </h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label mt-2">Nhập tên danh mục mới</label>
+              <input class="form-control input-name" type="text" required autocomplete="off" name="name" >
+              <label class="control-label mt-2">Mô tả</label>
+              <input class="form-control input-description" type="text" required autocomplete="off" name="description" >
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Danh mục sản phẩm hiện đang có</label>
+              <ul class="list-dm" style="padding-left: 20px;">
+                {{#each listCategories}}
+                <li>{{this.name}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+MODAL
+-->
+
+
+
+
+  <!--
+  MODAL TÌNH TRẠNG
+-->
+  <div class="modal fade" id="addtinhtrang" tabindex="-1" role="dialog" aria-labelledby="addNhaCungCapTitle"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 10px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span class="thong-tin-thanh-toan">
+                <h5>Thêm mới tình trạng</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Nhập tình trạng mới</label>
+              <input class="form-control input-name" name="status" type="text" required autocomplete="off">
+              <label class="control-label mt-2">Mô tả</label>
+              <input class="form-control input-description" name="description" type="text" required autocomplete="off">
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Các tình trạng hàng hiện có</label>
+              <ul class="list-item-status" style="padding-left: 20px;">
+                {{#each listItemStatus}}
+                <li>{{this.name}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+MODAL
+-->
+<script>
+
+var arrSrc = [],
+    fileUpload = [];
+function readURL(input) {
+    for (var i = 0; i < input.files.length; i++) {
+        if (input.files && input.files[i]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var src = e.target.result;
+
+                for (var i = 0; i < arrSrc.length; i++) {
+                    if (arrSrc[i] == src) return;
+                }
+                arrSrc.push(src);
+                var a = document.querySelector('#my-image-upload');
+                var div = document.createElement('div');
+                div.classList = 'col img-demo mt-2';
+                div.innerHTML = `<img width="200" height="260" src="${src}">
+          <a href="javascript:" class="remove-img" onclick="removeImage(this)"><i class="fa fa-times" aria-hidden="true"></i></a>`;
+                a.appendChild(div);
+            };
+            reader.readAsDataURL(input.files[i]);
+        }
+    }
+}
+function removeImage(event) {
+    event.parentElement.remove();
+}
+var mota = null;
+ClassicEditor.create(document.querySelector('#mota'), {
+    ckfinder: {
+        uploadUrl: '/api/upload-images-ck-editor',
+    },
+    language: {
+            ui: 'vi',
+        },
+})
+    .then((editor) => {
+        window.editor = editor;
+        mota = editor;
+        editor.setData(document.getElementById('mota').innerHTML);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+
+async function saveProduct() {
+    var form = new FormData();
+    var imageCK = document.querySelectorAll(
+        'div.ck.ck-reset.ck-editor.ck-rounded-corners > div.ck.ck-editor__main > div img'
+    );
+    var uploadImages = document.querySelectorAll('#my-image-upload img');
+    for (var i = 0; i < uploadImages.length; i++) {
+        var tmp = DataURIToBlob(uploadImages[i].src);
+        form.append('images', tmp);
+    }
+
+    for (var i = 0; i < imageCK.length; i++) {
+        if (imageCK[i].src.search('data:image/') != -1) {
+            var tmp = DataURIToBlob(imageCK[i].src);
+            form.append('imageCKs', tmp);
+        } else
+            {
+              imageCK[i].setAttribute("crossorigin","anonymous");
+              var base = getBase64Image(imageCK[i]);
+              var blob = DataURIToBlob(base);
+              form.append('imageCKs', blob);
+            }
+    }
+    var id = document.getElementById('input-id').value,
+        name = document.getElementById('input-name').value,
+        quantity = document.getElementById('input-quantity').value,
+        status = document.getElementById('input-status').value,
+        categories = document.getElementById('input-categories').value,
+        price = document.getElementById('input-price').value,
+        priceSale = document.getElementById('input-salePrice').value,
+        importPrice = document.getElementById('input-importPrice').value,
+        supplier = document.getElementById('input-supplier').value;
+    form.append('id', id);
+    form.append('name', name);
+    form.append('quantity', quantity);
+    form.append('status', status);
+    form.append('categories', categories);
+    form.append('price', price);
+    form.append('priceSale', priceSale);
+    form.append('importPrice', importPrice);
+    form.append('supplier', supplier);
+    form.append('description', mota.getData());
+    var settings = {
+        url: '/api/add-product',
+        method: 'POST',
+        timeout: 0,
+        processData: false,
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        data: form,
+    };
+    $.ajax(settings)
+        .done((data) => {
+            data = JSON.parse(data);
+            var code = data.code,
+                message = data.message;
+            alert(message);
+            if (code != 401)
+              window.location = 'quan-ly-san-pham';
+        })
+        .fail((e) => {
+            console.log(e);
+            alert('Error!Message: ' + e.message);
+        });
+}
+</script>

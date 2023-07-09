@@ -1,0 +1,189 @@
+<html lang='vi'>
+    <head>
+        <title>{{title}} | Quản trị Admin</title>
+        <meta charset='utf-8' />
+        <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <!-- Main CSS-->
+        <link rel='stylesheet' type='text/css' href='/admin/css/main.css' />
+
+        <!-- Font-icon css-->
+        <link
+            rel='stylesheet'
+            href='https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css'
+        />
+        <link
+            rel='stylesheet'
+            type='text/css'
+            href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'
+        />
+        <script
+            src='https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js'
+        ></script>
+        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.8.2/css/all.css' />
+        <link
+            rel='stylesheet'
+            href='https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css'
+        />
+        <link rel='shortcut icon' href='/img/front-end/favicon.jpg' type='image/x-icon' />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
+
+    <body onload='time()' class='app sidebar-mini rtl'>
+        <!-- Navbar-->
+        <header class='app-header'>
+            <!-- Sidebar toggle button--><a
+                class='app-sidebar__toggle'
+                href='#'
+                data-toggle='sidebar'
+                aria-label='Hide Sidebar'
+            ></a>
+            <!-- Navbar Right Menu-->
+            <ul class='app-nav'>
+                <!-- User Menu-->
+                <li><a class='app-nav__item' href='/admin/logout'><i
+                            class='bx bx-log-out bx-rotate-180'
+                        ></i>
+                    </a>
+                </li>
+            </ul>
+        </header>
+        <!-- Sidebar menu-->
+        <div class='app-sidebar__overlay' data-toggle='sidebar'></div>
+        <aside class='app-sidebar'>
+            <div class='app-sidebar__user'><img
+                    class='app-sidebar__user-avatar'
+                    src='/admin/images/{{admin.avatar}}'
+                    width='50px'
+                    alt='User Image'
+                />
+                <div>
+                    <p class='app-sidebar__user-name'><b>{{admin.name}}</b></p>
+                    <p class='app-sidebar__user-designation'>Chức vụ: 
+                                        {{#if admin.isAdmin}}
+                                        Quản trị viên
+                                        {{else}}
+                                        Nhân Viên
+                                        {{/if}}
+                                        </p>
+                </div>
+            </div>
+            <hr />
+            <ul class='app-menu'>
+                <li><a class='app-menu__item' href='/admin'>
+                        <i class='app-menu__icon bx bx-tachometer'> </i>
+                        <span class='app-menu__label'>Bảng điều khiển</span>
+                    </a></li>
+                {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='quan-ly-nhan-vien'>
+                        <i class='app-menu__icon bx bx-id-card'></i>
+                        <span class='app-menu__label'>Quản lý nhân viên</span>
+                    </a>
+                </li>
+                {{/if}}
+                {{#if admin.isAdmin}}
+                <li>
+                    
+                    <a class='app-menu__item' href='/admin/quan-ly-doanh-thu'>
+                        <i class="app-menu__icon bx bx-line-chart" ></i>
+                        <span class='app-menu__label'>Quản lý doanh thu</span>
+                    </a>
+                </li>
+                {{/if}}
+                {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='/admin/thong-ke'>
+                        <i class="app-menu__icon bx bxs-objects-vertical-bottom" ></i>
+                        <span class='app-menu__label'>Thống kê</span>
+                    </a>
+                </li>
+                {{/if}}
+                {{!-- {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='/admin/theo-doi-giao-dich'>
+                        <i class="app-menu__icon bx bx-math" ></i>
+                        <span class='app-menu__label'>Theo dõi giao dịch</span>
+                    </a>
+                </li>
+                {{/if}} --}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-khach-hang'>
+                        <i class='app-menu__icon bx bx-user-voice'>
+                        </i>
+                        <span class='app-menu__label'>Quản lý khách hàng</span>
+                    </a>
+                </li>
+                {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-san-pham'>
+                        <i class='app-menu__icon bx bx-purchase-tag-alt'></i>
+                        <span class='app-menu__label'>Quản lý sản phẩm</span>
+                    </a>
+                </li>
+                {{/if}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-don-hang'>
+                        <i class='app-menu__icon bx bx-task'></i>
+                        <span class='app-menu__label'>Quản lý đơn hàng</span>
+                    </a>
+                </li>
+                {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-nha-cung-cap'>
+                        <i class="app-menu__icon bx bxs-truck" ></i>
+                        <span class='app-menu__label'>Quản lý nhà cung cấp</span>
+                    </a>
+                </li>
+                {{/if}}
+                {{#if admin.isAdmin}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-danh-muc'>
+                        <i class="app-menu__icon bx bx-category-alt" ></i>
+                        <span class='app-menu__label'>Quản lý danh mục</span>
+                    </a>
+                </li>
+                {{/if}}
+                <li>
+                    <a class='app-menu__item' href='/admin/quan-ly-bai-viet'>
+                        <i class="app-menu__icon bx bxs-news" ></i>
+                        <span class='app-menu__label'>Quản lý bài viết</span>
+                    </a>
+                </li>
+                
+
+            </ul>
+        </aside>
+        <script src='/admin/js/jquery-3.2.1.min.js'></script>
+
+        {{{body}}}
+        <!--===============================================================================================-->
+        <script src='/admin/js/popper.min.js'></script>
+        <script src='https://unpkg.com/boxicons@latest/dist/boxicons.js'></script>
+        <!--===============================================================================================-->
+        <script src='/admin/js/bootstrap.min.js'></script>
+        <!--===============================================================================================-->
+        <script src='/admin/js/main.js'></script>
+        <!--===============================================================================================-->
+        <script src='/admin/js/plugins/pace.min.js'></script>
+        <!--===============================================================================================-->
+        {{!-- <script type='text/javascript' src='/admin/js/plugins/chart.js'></script> --}}
+
+        <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+        <!-- The javascript plugin to display page loading on top-->
+        <!-- Page specific javascripts-->
+        <script
+            src='https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js'
+        ></script>
+        <!-- Data table plugin-->
+        <script type='text/javascript' src='/admin/js/plugins/jquery.dataTables.min.js'></script>
+        <script type='text/javascript' src='/admin/js/plugins/dataTables.bootstrap.min.js'></script>
+        {{! QUản lý sản phẩm }}
+        <script>
+            $('#product-table').DataTable({ "order": [] });
+            $('#sampleTable').DataTable({ "order": [] });
+        </script>
+    </body>
+
+</html>

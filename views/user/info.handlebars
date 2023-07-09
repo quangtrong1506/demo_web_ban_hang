@@ -1,0 +1,165 @@
+<section class='user-info'>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-3 col-sm-6 col-md-4'>
+        <div class='nav'>
+          <ul>
+            <li>
+              <a href='/user/thong-tin-ca-nhan'>Thông tin cá nhân</a>
+            </li>
+            <li>
+              <a href='/user/mat-khau'>Mật khẩu</a>
+            </li>
+            <li>
+              <a href='/user/gio-hang'>Giỏ hàng</a>
+            </li>
+            <li>
+              <a href='/user/don-hang'>Đơn hàng</a>
+            </li>
+            <li>
+              <a href='/user/dang-xuat'>Đăng xuất</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class='col-lg-9 col-sm-6 col-md-8'>
+        <div class='row user-info__info'>
+          <div class='col-lg-9 col-md-12'>
+            <div class='edit-info'>
+              <h3 style='margin-bottom: 10px;'>Thông tin cá nhân</h3>
+              <div class='form-group'>
+                <label for='name'>Họ & Tên</label>
+                <input type='text' class='form-control' id='name' value='{{session.userInfo.name}}' />
+              </div>
+              <div class='form-group'>
+                <label for='phone'>Số điện thoại</label>
+                <input type='tel' class='form-control' id='phone' value='{{session.userInfo.phone}}' />
+              </div>
+              <div class='form-group'>
+                <label for='email'>Email</label>
+                <input type='email' class='form-control' id='email' value='{{session.userInfo.email}}' />
+              </div>
+              <div class='form-group'>
+                <label for='address'>Địa chỉ</label>
+                <input type='address' class='form-control' id='address' value='{{session.userInfo.address}}' />
+              </div>
+              <button type='submit' class='btn btn-primary' onclick='saveProfile()'>Lưu lại</button>
+            </div>
+          </div>
+          <div class='user-profile col-lg-3 col-md-12'>
+            <div class='avatar'>
+              <img id='avatar-choice' src='/images/user/{{session.userInfo.avatar}}' alt='' />
+            </div>
+            <div class='button'>
+              <input type='file' id='upLoadAvatar' onchange='upload(this)' style='display: none;'
+                accept='.jpg,.png,.jpeg' />
+              <label class='btn' for='upLoadAvatar'>Upload</label>
+              <br />
+              <span>Định dạng cho phép: jpg, jepg, png</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  function upload(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var src = e.target.result;
+        document.getElementById("avatar-choice").src = src;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function
+  saveProfile() {
+    var name = document.getElementById("name").value,
+      phone = document.getElementById("phone").value,
+      email = document.getElementById("email").value,
+      address = document.getElementById("address").value;
+    var avatar = document.getElementById("avatar-choice").src;
+    var blob = DataURIToBlob(avatar);
+    var form = new FormData();
+    form.append("name", name);
+    form.append("phone", phone);
+    form.append("email", email);
+    form.append("address", address)
+    form.append("avatar", blob);
+    var settings = {
+      "url": "/user/thay-doi-thong-tin-ca-nhan",
+      "method": "POST",
+      "timeout": 0,
+      "processData": false,
+      "mimeType": "multipart/form-data",
+      "contentType": false,
+      "data": form
+    };
+    $.ajax(settings).done(function(response) {
+      if (typeof response != 'object') response = JSON.parse(response);
+      var icon = response.code == 401 ? 'warning' : 'success';
+      Swal.fire({
+        title: '',
+        text: response.message,
+        icon: icon,
+        button: {
+          confirm: {
+            text: 'Xác nhận',
+            visible: true,
+            closeModal: true,
+          },
+        },
+      }).then((confirm) => {
+        if (confirm) close();
+      });
+
+      function close() {
+        if (response.message.match('đăng nhập')) {
+          loginInHeader();
+        }
+        else if(!response.code) window.location.reload();
+      }
+    });
+  }
+
+  function ConvertImgToBase64(imageOld) {
+    var image = new Image();
+    image.crossOrigin = 'Anonymous';
+    image.onload = function() {
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d');
+      canvas.height = this.naturalHeight;
+      canvas.width = this.naturalWidth;
+      context.drawImage(this, 0, 0);
+      var dataURL = canvas.toDataURL('image/jpeg');
+      imageOld.src = dataURL;
+    };
+    image.src = imageOld.src;
+  }
+
+  function DataURIToBlob(dataURI) {
+    const splitDataURI = dataURI.split(',');
+    const byteString =
+      splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1]);
+    const mimeString = splitDataURI[0].split(':')[1].split(';')[0];
+    const ia = new Uint8Array(byteString.length);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    return new Blob([ia], {
+      type: mimeString
+    });
+  }
+   window.onload = ()=>{
+    if(document.getElementById("avatar-choice") || document.getElementById("old-password"))
+                {
+                    {{#if session.login}}
+                    if(document.getElementById("avatar-choice"))
+                    ConvertImgToBase64(document.getElementById("avatar-choice"));
+                    {{else}}
+                    loginInHeader()
+                {{/if}}
+                }
+   }
+</script>

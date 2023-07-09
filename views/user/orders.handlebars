@@ -1,0 +1,149 @@
+
+<section class="user-info"> 
+{{#if session.login}}
+<div class="container">
+    <div class="row ">
+        <div class="col-lg-3 col-sm-12">
+          <div class="nav">
+            <ul>
+              <li>
+                <a href="/user/thong-tin-ca-nhan">Thông tin cá nhân</a>
+              </li>
+              <li>
+                <a href="/user/mat-khau">Mật khẩu</a>
+              </li>
+              <li>
+                <a href="/user/gio-hang">Giỏ hàng</a>
+              </li>
+              <li>
+                <a href="/user/don-hang">Đơn hàng</a>
+              </li>
+              <li>
+                <a href="/user/dang-xuat">Đăng xuất</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+            {{#if count}}
+        <div class="col-lg-9 col-sm-12">
+          <h3>Lịch sử giao dịch</h3>
+          <table class="my-orders">
+            <tr class="row header" style="justify-content: space-between;">
+              <th style="max-width: 10%;">Mã đơn hàng</th>
+              <th style="flex: 4; text-align: left;max-width: 40%;">Danh sách sản phẩm</th>
+              <th style="max-width: 10%;">Giảm giá</th>
+              <th>Thành tiền</th>
+              <th>Trạng thái</th>
+              <th>Lựa chọn</th>
+            </tr>
+            {{#each orders}}
+            <tr class="row">
+              <td style="max-width: 10%;">#{{this.id}}</td>
+              <td style="flex: 4; text-align: left; max-width: 40%;">
+                {{#each this.products}}
+                <span class="name-product"> {{this.name}}</span><br>
+                {{/each}}
+              </td>
+              <td class="money middle-text" style="max-width: 10%;"><span>{{this.discount}}</span></td>
+              <td class="money middle-text"><span>{{this.total}}</span></td>
+              <td class="middle-text"><span>{{this.status}}</span></td>
+              <td >
+                <a href="/user/chi-tiet-don-hang?id={{this.id}}">Chi tiết</a><br>
+                {{#if this.canCancel}}
+                <a style="color: red;" href="javascript:" onclick="huyDH('{{this.id}}')">Hủy đơn hàng</a>
+                {{/if}}
+              </td>
+            </tr>
+            {{/each}}
+          </table>
+        </div>
+            {{else}}
+        <div class="col-lg-9 col-sm-12">
+          <div class="row">
+              <h3 class="col col-12" style="text-align: center;">Bạn chưa có đơn hàng nào</h3>
+              <div class="col col-12" style="text-align: center; margin-top: 15px;">
+                  <a href="/san-pham" class="primary-btn cart-btn" >Tiếp tục mua sắm</a>
+              </div>
+          </div>
+        </div>
+    {{/if}}  
+    </div> 
+</div>
+    
+{{else}}
+<div class="container">
+    <div class="row">
+    <h3 class="col col-12" style="text-align: center;">Vui lòng đăng nhập để sử dụng</h3>
+    <div class="col" style="text-align: center;">
+        <br>
+        <button class="btn" style="border: 1px solid #979797;" onclick="loginInHeader()">
+        Đăng nhập
+        </button>
+    </div>
+    </div>
+</div>
+{{/if}}
+</section>
+  <style>
+    .my-orders {
+      width: calc(100% - 40px);
+      margin: 30px 10px
+    }
+
+    .my-orders .header {
+      font-size: 20px;
+      background-color: white !important;
+      border-bottom: 1px solid rgb(126, 126, 126) !important;
+    }
+
+    .my-orders tr {
+      margin: 30px 0;
+    }
+    .my-orders td {
+      position: relative;
+    }
+    .my-orders td::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -10px;
+      bottom:-10px ;
+      width: 1px;
+      background-color: #979797;
+    }
+    .my-orders td:first-child:after{
+      background-color: #fff;
+    }
+    .my-orders tr:nth-child(odd) {
+      background-color: rgb(235, 235, 235);
+    }
+
+    .my-orders td,
+    .my-orders th {
+      text-align: center;
+      flex: 1;
+          }
+
+    .name-product {
+      max-width: 100%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-left: 10px;
+    }
+    .money{
+      color: red;
+    }
+
+    .my-orders a:hover {
+      text-decoration: underline !important;
+    }
+    .middle-text{
+      display: flex;
+      justify-content: center;
+      align-content:center ;
+      vertical-align: middle;
+      align-items: center
+    }
+  </style>

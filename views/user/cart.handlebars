@@ -1,0 +1,307 @@
+<section class="shoping-cart">
+        {{#if session.login}}
+        <div class="container">
+            {{#if count}}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <label class="container prod-check-all">
+                                        <input id="prod-check-all" type="checkbox" >
+                                        <span class="checkmark"></span>
+                                        </label>
+                                    </th>
+                                    <th class="shoping__product">Sản phẩm</th>
+                                    <th class="shoping__price">Giá</th>
+                                    <th class="shoping__quantity">Số lượng</th>
+                                    <th class="shoping__total">Thành tiền</th>
+                                    <th class="shoping__close" ></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                  {{#each cart}}
+                                  <tr id="row-{{this.productId}}">
+                                    <td>
+                                        <label class="container">
+                                        <input class="prod-select" data-productid="{{this.productId}}" type="checkbox" >
+                                        <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                    <td class="shoping__cart__item">
+                                        <img src="/images/product/{{this.image}}" alt="" width="120px">
+                                        <h5 class="text-overflow">
+                                            <a id="name-{{this.productId}}" href="/san-pham/{{this.slug}}">
+                                              {{this.name}}
+                                            </a>
+                                        </h5>
+                                    </td>
+                                    <td class="shoping__cart__price">
+                                       {{this.price}}
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="quantity">
+                                            <div class="pro-qty">
+                                                <input id="{{this.productId}}" type="text" value="{{this.quantity}}" oninput="changeQuantity('{{this.productId}}')" onblur="blurQuantity('{{this.productId}}')">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="total-{{this.productId}}" class="shoping__cart__total">
+                                        {{this.total}}
+                                    </td>
+                                    <td class="shoping__cart__item__close">
+                                        <span class="icon_close" onclick="removeCart('{{this.productId}}')"></span>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__btns">
+                        <a href="/san-pham" class="primary-btn cart-btn">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+                <div class="col-lg-6" id="ma-giam-gia">
+                    <div class="shoping__continue">
+                        <div class="shoping__discount">
+                            <h5>Mã giảm giá</h5>
+                            <div>
+                                <input id="discount-input"  type="text" placeholder="Nhập mã giảm giá">
+                                <button type="button" class="site-btn" onclick="apDung()">Áp dụng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="shoping__checkout">
+                        <h5>Thanh toán hóa đơn</h5>
+                        <ul>
+                            <li>Tổng tiền <span id="total-all" data-value="0">0</span></li>
+                            <li>Giảm giá <span id="discount-value" data-code="" data-value="0">- 0đ</span></li>
+                            <li>Thanh toán <span id="pay-all">0</span></li>
+                        </ul>
+                        <form id="form-thanh-toan" action="/user/thanh-toan" method="post" onsubmit="PostThanhToan(event)">
+                            <input id="upload-prod" style="display: none;" type="text" name="products" value="">
+                            <input id="code-giam-gia" style="display: none;" type="text" name="code" value="">
+                            <button id="thanh-toan-btn" type="submit" class="primary-btn">Thanh toán</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="row">
+                <h3 class="col col-12" style="text-align: center;">Chưa có sản phẩm nào</h3>
+                <div class="col col-12" style="text-align: center; margin-top: 15px;">
+                    <a href="/san-pham" class="primary-btn cart-btn" >Tiếp tục mua sắm</a>
+                </div>
+            </div>
+            {{/if}}   
+        </div>
+            
+        {{else}}
+        <div class="container">
+          <div class="row">
+            <h3 class="col col-12" style="text-align: center;">Vui lòng đăng nhập để xem giỏ hàng</h3>
+            <div class="col" style="text-align: center;">
+              <br>
+              <button class="btn" style="border: 1px solid #979797;" onclick="loginInHeader()">
+               Đăng nhập
+              </button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+    </section>
+
+    <script>
+  var post = false;
+      
+function changeQuantity(id) {
+    var quantity = document.getElementById(id).value;
+    if (quantity == 0) return removeCart(id);
+    if (!isNaN(quantity)) {
+        if (quantity.match(/[^0-9]/g)) {
+            quantity = 1;
+            document.getElementById(id).value = 1;
+        }
+        var settings = {
+            url: '/api/update-cart',
+            method: 'POST',
+            timeout: 0,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify({
+                productId: id,
+                quantity: quantity,
+            }),
+        };
+
+        $.ajax(settings).done(function (response) {
+            if (response.code == 401 && !response.message.match('0'))
+                Swal.fire({
+                    title: 'Cảnh báo',
+                    text: response.message,
+                    icon: 'warning',
+                    button: {
+                        confirm: {
+                            text: 'Xác nhận',
+                            visible: true,
+                            closeModal: true,
+                        },
+                    },
+                }).then((confirm) => {
+                    if (confirm) close();
+                    document.getElementById(id).value = response.cart.quantity;
+                });
+            else if (response.code != 401) {
+                document.getElementById('total-' + id).innerHTML = response.cart.sum;
+                updateCart2();
+            }
+
+            function close() {
+                if (response.message.match('đăng nhập')) {
+                    loginInHeader();
+                }
+            }
+        });
+    }
+}
+function blurQuantity(id) {
+    var quantity = document.getElementById(id).value;
+    if (quantity == '' || quantity == null) {
+        document.getElementById(id).value = 1;
+        changeQuantity(id);
+    }
+}
+function updateCart2() {
+    var settings = {
+        url: '/api/cart-info',
+        method: 'POST',
+        timeout: 0,
+    };
+
+    $.ajax(settings).done(function (response) {
+        if (typeof response != 'object') response = JSON.parse(response);
+        if (response.code != 401) {
+            if (response.canCheckOut) 
+            post= true;
+            var discount = parseInt(
+                document.getElementById('discount-value').getAttribute('data-value')
+            );
+            if(discount>0){
+                document.getElementById('discount-value').setAttribute('data-code',document.getElementById('discount-input').value.toUpperCase())
+                document.getElementById('code-giam-gia').setAttribute('value',document.getElementById('discount-input').value .toUpperCase())
+            }
+            var pay = response.sum - discount <0 ? 0:response.sum - discount;
+            
+            var payAll = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+            }).format(pay);
+             var discountPrice = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+            }).format(discount);
+
+            if(response.count == 0){
+                document.querySelector(".shoping-cart .container").innerHTML =
+                `<div class="row">
+                    <h3 class="col col-12" style="text-align: center;">Chưa có sản phẩm nào</h3>
+                    <div class="col col-12" style="text-align: center; margin-top: 15px;">
+                        <a href="/san-pham" class="primary-btn cart-btn" >Tiếp tục mua sắm</a>
+                    </div>
+                 </div>`
+                 return;
+            }
+            document.getElementById('cart-count').innerHTML = response.count;
+            document.getElementById('cart-price').innerHTML = response.sumText;
+            document.getElementById('discount-value').innerHTML ="-"+ discountPrice;
+            changeCheckProduct()
+        }
+    });
+}
+function removeCart(id) {
+    Swal.fire({
+        title: 'Thông báo',
+        text: 'Xác nhận xóa sản phẩm: ' + document.getElementById('name-' + id).innerText,
+        showDenyButton: true,
+        confirmButtonText: 'Xác nhận',
+        denyButtonText: 'Hủy',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var settings = {
+                url: '/api/remove-cart',
+                method: 'POST',
+                timeout: 0,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify({
+                    productId: id,
+                }),
+            };
+
+            $.ajax(settings).done(function (response) {
+                if (!response.code) {
+                    document.getElementById('row-' + id).remove();
+                    updateCart2();
+                }
+            });
+        } else if (document.getElementById(id).value == 0) {
+            document.getElementById(id).value = 1;
+            changeQuantity(id);
+        }
+    });
+}
+function apDung() {
+    var code = document.getElementById('discount-input').value;
+    var settings = {
+        url: '/api/check-voucher',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            code: code.toUpperCase(),
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        Swal.fire(response.message)
+        if (!response.code) {
+            var price = response.price
+            if(!price) price = 0;
+            document.getElementById('discount-value').setAttribute('data-value', price);
+            changeCheckProduct();
+        }
+    });
+}
+function PostThanhToan(event){
+    event.preventDefault();
+    let code = document.getElementById("discount-value").getAttribute("data-code");
+    let products = [];
+    let list = $('.prod-select');
+    for (let index = 0; index < list.length; index++) {
+        const element = list[index];
+        if (element.checked) {
+            let quantity = document.getElementById(element.getAttribute('data-productid')).value;
+            products.push({
+                productId: element.getAttribute('data-productid'),
+                quantity: quantity,
+            });
+        }
+    }
+    if(products.length == 0)
+       return Swal.fire("Bạn chưa chọn sản phẩm nào");
+    document.getElementById("upload-prod").value = JSON.stringify(products)
+    document.getElementById("form-thanh-toan").submit()
+}
+    </script>

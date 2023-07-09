@@ -1,0 +1,361 @@
+<!-- Product Details Section Begin -->
+<section class="product-details spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__item">
+            <img
+              class="product__details__pic__item--large"
+              src="/images/product/{{product.images.[0]}}"
+              alt="{{product.images.[0]}}"
+            />
+          </div>
+          <div class="product__details__pic__slider owl-carousel">
+            {{#each product.images}}
+              <img data-imgbigurl="/images/product/{{this}}" src="/images/product/{{this}}" alt="{{this}}" />
+            {{/each}}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+          <h3>{{product.name}}</h3>
+          <div class="product__details__rating">
+            <div class="rating_stars star-selector">
+            </div>
+          </div>
+          <div class="product__details__price">
+            {{#if product.sale}}
+             <span class="product__details__price__old">{{product.priceOld}}</span>
+            {{/if}}
+            <span>{{product.price}}</span>
+            {{#if product.stop}}
+                  <span class="product__details__stop">Ngừng kinh doanh</span>
+            {{else}}
+            {{#if product.hetHang}}
+            <span class="product__details__price__present">Hết hàng</span>
+            {{else}}
+            {{#if product.sale}}
+            <span class="product__details__price__present">Giảm {{product.presentSale}}%</span>
+             {{/if}}
+             {{/if}}
+             {{/if}}
+            </div>
+          <div class="product__details__quantity">
+            <div class="quantity">
+              <div class="pro-qty">
+                <input id="quantity-input" type="text" value="1" />
+              </div>
+            </div>
+          </div>
+          <a href="javascript:" class="primary-btn" onclick="addToCartBtnClick('{{product.id}}')">Thêm vào giỏ</a>
+          <a href="javascript:" class="primary-btn" onclick="buyNow('{{product.id}}')">Mua ngay</a>
+          <ul>
+            <li><b>Số lượng tồn kho</b> <span class="count-so-luong-co">{{product.quantity}}</span></li>
+            <li><b>Chia sẻ</b>
+              <div class="share">
+                <span onclick="share('/san-pham/{{product.slug}}','Chia sẻ sản phẩm','{{product.name}}')">
+                  <i class="fa fa-share-square-o" style="cursor: pointer;" aria-hidden="true"></i>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                data-toggle="tab"
+                href="#tabs-1"
+                role="tab"
+                aria-selected="false"
+              >Thông tin sản phẩm</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-toggle="tab"
+                href="#tabs-2"
+                role="tab"
+                aria-selected="false"
+              >Bình luận của khách hàng</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <p>{{{product.description}}}</p>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel" style="margin-bottom: 50px;">
+              <div class="product__details__tab__desc">
+                <div class="row">
+                  <div class="col">
+                    <h4>Đánh giá của khách hàng</h4>
+                  </div>
+                  <div class="col" style="text-align: right;">
+                    <input type="button" value="Bình luận sản phẩm" onclick="DanhGiaSanPham()">
+                  </div>
+
+                </div>
+                <div class="row">
+                  {{#each comment}}
+                  <div class="col col-md-12 mt-5 p-1" style="border-bottom: 1px solid rgb(234, 234, 234);">
+                    <div class="row">
+                      <div class="avatar" style="max-width: 50px; max-height: 50px; overflow: hidden; border-radius: 50%; border: 1px solid rgb(232, 232, 232); margin-left: 30px;">
+                      <img src="/images/user/{{this.userInfo.avatar}}" alt="" width="50">
+                    </div>
+                    <div class="row ml-3">
+                      <div class="col col-md-12 username" style="font-size: 18px;">{{this.userInfo.name}}</div>
+                      <div class="star col-md-12 star-cm" data-star="{{this.star}}" >
+                        
+                      </div>
+                        <div class="time col-md-12" style="position: absolute; top: 50px; width: 100px;">
+                        <span style="font-size: 14px;">{{this.time}}</span>
+                      </div>
+                      <div class="col-md-12 mt-3">
+                        <span style="font-size: 20px;">{{this.comment}}</span>
+                      </div>
+                      <div style="position: absolute; right: 20px; top: 3px;">
+                       {{#if this.isMyComment}}
+                        <input type="button" value="Sửa" style="background-color: white; outline: none; border: 1px solid rgb(184, 184, 184);" onclick="DanhGiaSanPham()">
+                        <input type="button" value="xóa" style="background-color: white; outline: none; border: 1px solid rgb(184, 184, 184);" onclick="XoaBinhLuan()">
+                       {{/if}}
+                      </div>
+                    </div>
+                    
+                    </div>
+                  </div>
+                  {{/each}}
+                  {{#if cmtCount}}
+                  {{else}}
+                  <div class="col" style="text-align: center; margin-top: 150px;">Chưa có bình luận nào</div> 
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Product Details Section End -->
+
+<!-- Related Product Section Begin -->
+<section class="related-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="section-title related__product__title">
+          <h2>Các sản phẩm liên quan</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      {{#each productLike}}
+      <div class='col-lg-3 col-md-4 col-sm-6'>
+            <div class='featured__item'>
+                <div
+                    class='featured__item__pic set-bg'
+                    data-setbg='/images/product/{{this.images.[0]}}'>
+                    <ul class='featured__item__pic__hover'>
+                        <li>
+                            <a href='javascript:' onclick="share('/san-pham/{{this.slug}}')"><i class='fa fa-share-alt'></i></a>
+                        </li>
+                        <li>
+                            <a href='javascript:' onclick="addToCart('{{this.id}}',1)"><i class='fa fa-shopping-cart'></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class='featured__item__text'>
+                    <h6>
+                        <a href='/san-pham/{{this.slug}}'>
+                            {{this.name}}
+                        </a>
+                    </h6>
+                    <h5>{{this.price}}</h5>
+                </div>
+
+                {{#if this.stop}}
+                <div class="sale" style="background-color: blueviolet;">Ngừng kinh doanh</div>
+                {{else}}
+                {{#if this.quantity}}
+                {{#if this.sale}}
+                <div class="sale">-{{this.present}}%</div>
+                {{/if}}
+                {{else}}
+                  <div class="sale">Hết hàng</div>
+                {{/if}}
+                {{/if}}
+            </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+<form id="form-thanh-toan" action="/user/thanh-toan" method="post">
+    <input id="upload-prod" style="display: none;" type="text" name="products" value="">
+    <input id="code-giam-gia" style="display: none;" type="text" name="code" value="">
+</form>
+<script>
+  function PostThanhToan2(id,quantity){
+    let products = [
+      {
+        productId:id,
+        quantity:quantity
+      }
+    ];
+    document.getElementById("upload-prod").value = JSON.stringify(products)
+    document.getElementById("form-thanh-toan").submit()
+}
+let tmp = "{{myComment.comment}}";
+var star;
+function DanhGiaSanPham() {
+  star = "{{myComment.star}}";
+  if(star == 1  ) var checked1 = "checked";
+  if(star == 2  ) var checked2 = "checked";
+  if(star == 3  ) var checked3 = "checked";
+  if(star == 4  ) var checked4 = "checked";
+  if(star == 5  ) var checked5 = "checked";
+    Swal.fire({
+        title: 'Thêm đánh giá mới',
+        html: `
+        <h5>Đánh giá của bạn</h5>
+        <br>
+        <textarea name="" id="report-text" style="width: 80%; height: 100px;" >${tmp}</textarea>
+        <section id="rate" class="rating">
+        <input type="radio" id="star_5" name="rate" value="5" ${checked5} />
+        <label for="star_5" title="Five">&#9733;</label>
+        <input type="radio" id="star_4" name="rate" value="4" ${checked4} />
+        <label for="star_4" title="Four">&#9733;</label>
+        <input type="radio" id="star_3" name="rate" value="3" ${checked3} />
+        <label for="star_3" title="Three">&#9733;</label>
+        <input type="radio" id="star_2" name="rate" value="2" ${checked2} />
+        <label for="star_2" title="Two">&#9733;</label>
+        <input type="radio" id="star_1" name="rate" value="1" ${checked1}/>
+        <label for="star_1" title="One">&#9733;</label>
+        </section>
+        `,
+        focusConfirm: true,
+        showCancelButton: true,
+        confirmButtonText: 'Đánh giá',
+        cancelButtonText: 'Hủy',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let text = document.getElementById('report-text').value;
+            star = document.getElementById('star_5').checked
+                ? 5
+                : document.getElementById('star_4').checked
+                ? 4
+                : document.getElementById('star_3').checked
+                ? 3
+                : document.getElementById('star_2').checked
+                ? 2
+                : document.getElementById('star_1').checked
+                ? 1
+                : -1;
+            tmp = text;
+            if (!text) {
+                showAlert('Vui lòng nhập bình luận', '', 'info', DanhGiaSanPham);
+            } else if (star == -1) {
+                showAlert('Lựa chọn số sao đánh giá của bạn', '', 'info', DanhGiaSanPham);
+            } else {
+              var settings = {
+                "url": "/user/add-comment",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                  "Content-Type": "application/json",
+                },
+                "data": JSON.stringify({
+                  "userID": "{{session.userInfo.id}}",
+                  "productId":"{{product.id}}",
+                  "comment":text,
+                  "star":star
+                }),
+              };
+              $.ajax(settings).done(function (response) {
+                if(response.code == 200){
+                  Swal.fire({
+                  title: response.message,
+                  icon:"success",
+                  focusConfirm: true,
+                  confirmButtonText: 'OK',
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          location.reload()
+                        }
+                      })
+                }
+                if(response.code == 401)
+                  showAlert(response.message,"","error")
+              });
+            }
+        }
+    });
+}
+function setStart(){
+  var a = document.querySelectorAll(".star-cm");
+  for (let i = 0; i < a.length; i++) {
+    const element = a[i];
+    var aStar = element.getAttribute("data-star")
+    console.log(aStar)
+    for (let j = 0; j < 5; j++) {
+      if(j<aStar)
+      element.innerHTML += '<label style="color: rgb(255, 193, 77);">&#9733;</label>';
+      else 
+      element.innerHTML += '<label style="color: rgb(197, 197, 197);">&#9733;</label>';
+    }
+  } 
+}
+function XoaBinhLuan(){
+  Swal.fire({
+        title: 'Xác nhận xóa bình luận',
+        focusConfirm: true,
+        showCancelButton: true,
+        icon:"question",
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy',
+    }).then((result) => {
+        if (result.isConfirmed) {
+             
+              var settings = {
+                "url": "/user/delete-comment",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                  "Content-Type": "application/json",
+                },
+                "data": JSON.stringify({
+                  "userID": "{{session.userInfo.id}}",
+                  "productId":"{{product.id}}",
+                }),
+              };
+              $.ajax(settings).done(function (response) {
+                if(response.code == 200){
+                  Swal.fire({
+                  title: response.message,
+                  icon:"success",
+                  focusConfirm: true,
+                  confirmButtonText: 'OK',
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          location.reload()
+                        }
+                      })
+                }
+                if(response.code == 401)
+                  showAlert(response.message,"","error")
+              });
+            }
+        
+    });
+}
+setStart()
+//session: req.session
+</script>

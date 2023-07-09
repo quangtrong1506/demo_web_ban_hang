@@ -1,0 +1,101 @@
+<main class='app-content'>
+    <div class='app-title'>
+        <ul class='app-breadcrumb breadcrumb side'>
+            <li class='breadcrumb-item active'><a href='#'><b>Quản lý doanh thu</b></a></li>
+        </ul>
+        <div id='clock'></div>
+    </div>
+    <div class='row'>
+        <div class="col-lg-12 col-sm-12">
+          <div class="row" style="margin-top: 30px;">
+            <div class="col col-md-12">
+              <div class="row">
+                <div class="col col-md-12">
+                  <div class="row">
+                    <div class="col col-md-9"><h4>Doanh thu 12 tháng gần đây</h4></div>
+                    <div class="col col-md-3" style="text-align: right;">
+                      <label for="type-chart">Loại biểu đồ</label>
+                      <select name="" id="type-chart">
+                        <option value="bar">Cột</option>
+                        <option value="line">Đường</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col col-md-12">
+                  <canvas id="myChart"></canvas>
+                </div>
+                <div class="col-md-12 mt-5 mb-2">
+                  <h2>Lịch sử giao dịch gần đây</h2>
+                <div class="tile">
+                    <div class="tile-body">
+                        <table class="table table-hover table-bordered" id="product-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên giao dịch</th>
+                                    <th>Số tiền</th>
+                                    <th width="10" style="text-align: center;">Loại giao dịch</th>
+                                    <th>Thời gian</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {{#each LichSuGiaoDichDB}}
+                                <tr>
+                                    <td>#{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td >
+                                       {{this.mmoney}}
+                                    </td>
+                                    <td width="10" style="text-align: center;">{{this.type}}</td>
+                                    <td>{{this.time}}</td>
+                                    <td>{{this.note}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+var label = [];
+{{#each labels}}
+  label.push("{{this}}")
+{{/each}}
+var data = []
+{{#each data}}
+  data.push({{this}})
+{{/each}}
+var chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: label,
+          datasets: [{
+            label: "Đồng",
+            data: data,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+  document.getElementById("type-chart").addEventListener("change",()=>{
+    let type = document.getElementById("type-chart").value;
+     chart.config.type = type;
+    chart.update()
+  })
+</script>

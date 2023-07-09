@@ -1,0 +1,156 @@
+<section class="product spad">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="filter__item">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-5">
+                                <div class="filter__sort left">
+                                    <span>Lọc</span>
+                                    <select id="cat" onchange="changeCat()" value="{{cat}}">
+                                        <option value="Tất cả">Tất cả</option>
+                                        {{#each categories}}
+                                        <option value="{{this.name}}">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4">
+                                <div class="filter__found">
+                                    <h6>Tổng <span>{{count}}</span> Sản phẩm được tìm thấy</h6>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-3">
+                                <div class="filter__sort right">
+                                    <span>Sắp xếp</span>
+                                    <select id="sort" onchange="changeSort()" value="{{sort}}">
+                                        <option value="0">Mặc định</option>
+                                        <option value="1">Theo tên A-Z</option>
+                                        <option value="2">Theo tên Z-A</option>
+                                        <option value="3">Giá tăng dần</option>
+                                        <option value="4">Giá giảm dần</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row product__grid">
+                        {{#each products}}
+                            <div class='col-lg-3 col-md-4 col-sm-6'>
+                                <div class='featured__item'>
+                                    <div
+                                        class='featured__item__pic set-bg'
+                                        data-setbg='/images/product/{{this.images.[0]}}'>
+                                        <ul class='featured__item__pic__hover'>
+                                            <li>
+                                                <a href='javascript:' onclick="share('/san-pham/{{this.slug}}')"><i class='fa fa-share-alt'></i></a>
+                                            </li>
+                                            <li>
+                                                <a href='javascript:' onclick="addToCart('{{this.id}}',1)"><i class='fa fa-shopping-cart'></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class='featured__item__text'>
+                                        <h6>
+                                            <a href='/san-pham/{{this.slug}}'>
+                                                {{this.name}}
+                                            </a>
+                                        </h6>
+                                        <h5>{{this.price}}</h5>
+                                    </div>
+
+                                    {{#if this.stop}}
+                                    <div class="sale" style="background-color: blueviolet;">Ngừng kinh doanh</div>
+                                    {{else}}
+                                    {{#if this.quantity}}
+                                    {{#if this.sale}}
+                                    <div class="sale">-{{this.present}}%</div>
+                                    {{/if}}
+                                    {{else}}
+                                    <div class="sale">Hết hàng</div>
+                                    {{/if}}
+                                    {{/if}}
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                    {{#if number}}
+                        <div class="product__pagination">
+                            {{#if pageNumber.before}}
+                                <a href="/san-pham{{pageNumber.linkBefore}}">←</a>
+                            {{/if}}
+                            {{#each pageNumber.list}}
+                                <a href="/san-pham{{this.link}}" {{#if this.active}} class="active"{{/if}}>{{this.number}}</a>
+                            {{/each}}
+                            {{#if pageNumber.after}}
+                                <a href="/san-pham{{pageNumber.linkAfter}}">→</a>
+                            {{/if}}
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+</section>
+<script>
+    function changeCat(){
+        var cat = document.getElementById("cat").value;
+        var sort = '{{sort}}';
+        var search ="{{search}}";
+        var urlSearch = search ? "&search=" + search : "";
+        var urlCat = cat != "Tất cả" ? "&cat=" + cat : "";
+        var urlSort = sort != 0 ? "&sort=" + sort : "";
+        var url = urlSearch +urlCat + urlSort;
+        url = "?" + url.substring(1, url.length);
+        location.href = "/san-pham/"+url;
+    }
+    function changeSort(){
+        var cat = "{{cat}}";
+        var sort = document.getElementById("sort").value;
+        var search ="{{search}}";
+        var urlSearch = search ? "&search=" + search : "";
+        var urlCat = cat != "Tất cả" ? "&cat=" + cat : "";
+        var urlSort = sort != 0 ? "&sort=" + sort : "";
+        var url = urlSearch +urlCat + urlSort;
+        url = "?" + url.substring(1, url.length);
+        location.href = "/san-pham/"+url;
+    }
+    function setSelected(){
+        var catSetSelect = document.querySelectorAll(".filter__sort #cat option");
+        var catLi = document.querySelectorAll(".filter__sort.left .list li");
+        var sortSetSelect = document.querySelectorAll(".filter__sort #sort option");
+        var sortLi = document.querySelectorAll(".filter__sort.right .list li");
+        catSetSelect.forEach((element)=>{
+            if(element.innerHTML == "{{cat}}")
+                element.setAttribute("selected","true")
+            else
+                element.setAttribute("selected","false")
+        })
+        catLi.forEach((element)=>{
+            if(element.innerHTML == "{{cat}}")
+                element.classList.add("selected")
+            else
+                element.classList.remove("selected")
+        })
+        var text1 = "{{cat}}"||"Tất cả";
+        document.querySelector(".filter__sort.left span.current").innerHTML = text1;
+        sortSetSelect.forEach((element)=>{
+                if(element.innerHTML == "{{sortText}}")
+                    element.setAttribute("selected","true")
+                else
+                    element.setAttribute("selected","false")
+        })
+        sortLi.forEach((element)=>{
+            if(element.innerHTML == "{{sortText}}")
+                element.classList.add("selected")
+            else
+                element.classList.remove("selected")
+        })
+        var text2 = "{{sortText}}"||"Mặc định";
+        document.querySelector(".filter__sort.right span.current").innerHTML = text2;
+
+    }
+    window.onload = ()=>{
+        setSelected()
+        console.log("{{cat}}")
+    }
+</script>

@@ -1,0 +1,51 @@
+    <main class="app-content">
+        <div class="app-title">
+            <ul class="app-breadcrumb breadcrumb side">
+                <li class="breadcrumb-item active"><a href="#"><b>Danh sách tài khoản</b></a></li>
+            </ul>
+            <div id="clock"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tile">
+                    <div class="tile-body">
+                        <table class="table table-hover table-bordered" id="product-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên khách hàng</th>
+                                    <th>Ảnh</th>
+                                    <th>Điện thoại</th>
+                                    <th>Email</th>
+                                    <th>Địa chỉ</th>
+                                    <th width="10" style="text-align: center;">Sản phẩm đã mua</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each users}}
+                                <tr>
+                                    <td>#{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td width="20">
+                                        <img class="avatar" src="/images/user/{{this.avatar}}" alt="">
+                                    </td>
+                                    <td>{{this.phone}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>{{this.address}}</td>
+                                    <td width="10" style="text-align: center;">{{this.quantity}}</td>
+                                </tr>
+                                {{/each}}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <style>
+        img.avatar{
+            object-fit: contain;
+            max-width: 100px;
+        }
+    </style>

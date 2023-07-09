@@ -1,0 +1,183 @@
+<main class='app-content'>
+  <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item">Quản lý danh mục sản phẩm</li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div class='tile'>
+                <h3 class='tile-title'>
+                  <div class="row element-button">
+                    <div class="col-sm-2">
+                      <button class="btn btn-add btn-sm"  title="Thêm" data-toggle="modal" data-target="#addDanhMuc"><i class="fas fa-plus" ></i>
+                      Thêm danh mục mới</button>
+                    </div>
+                  </div>
+                </h3>
+                <div>
+                    <table class='table table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Tên danh mục</th>
+                                <th style="text-align: center;">Tổng sản phẩm</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each categories}}
+                              <tr class="index-{{@index}}">
+                                <td>{{this.name}}</td>
+                                <td style="text-align: center;">
+                                    {{this.count}}
+                                </td>
+                                <td><span>{{this.description}}</span></td>
+                                <td width="10">
+                                        <button class="btn btn-primary btn-sm" type="button" title="Sửa" data-toggle="modal" data-target="#editDanhMuc" onclick="editDanhMuc('{{this.name}}','{{this.description}}','{{@index}}')"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-primary btn-sm trash" type="button" title="Xóa" onclick="removeDanhMuc('{{this._id}}')"><i class="fas fa-trash-alt" ></i></button>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- / div trống-->
+            </div>
+        </div>
+    </div>
+    
+</main>
+  <div class="modal fade" id="editDanhMuc" tabindex="-1" role="dialog" aria-labelledby="editDanhMucTitle"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 20px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="padding: 30px; padding-top: 0;">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span style="display: inline-block;margin-top: 30px;">
+                <h5>Chỉnh sửa thông tin danh mục</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Tên danh mục</label>
+              <input class="form-control input-name" name="name" type="text" autocomplete="off" required>
+              <label class="control-label mt-2">Mô tả, ghi chú</label>
+              <input class="form-control input-description" type="text" autocomplete="off" name="description" >
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+MODAL
+-->
+<div class="modal fade" id="addDanhMuc" tabindex="-1" role="dialog" aria-labelledby="addDanhMucTitles"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 20px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="padding: 30px; padding-top: 0;">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span style="display: inline-block;margin-top: 30px;">
+                <h5>Nhập thông tin danh mục</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Tên danh mục</label>
+              <input class="form-control input-name" name="name" type="text" autocomplete="off" required>
+              <label class="control-label mt-2">Mô tả, ghi chú</label>
+              <input class="form-control input-description" type="text" autocomplete="off" name="description" >
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" onclick="saveDanhMuc()" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  function editDanhMuc(name, description, index) {
+    document.querySelector('#editDanhMuc .input-name').value = name;
+    document.querySelector('#editDanhMuc .input-description').value = description;
+    document
+        .querySelector('#editDanhMuc .btn-save')
+        .setAttribute('onclick', "saveDanhMuc('" + name + "','" + index + "')");
+}
+function saveDanhMuc(name, index) {
+    var newName = document.querySelector('#editDanhMuc .input-name').value;
+    var description = document.querySelector('#editDanhMuc .input-description').value;
+    var settings = {
+        url: '/api/edit-categories',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            oldName: name,
+            name: newName,
+            description: description,
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        alert(response.message);
+        if (response.status != 401) {
+            document.querySelector('#editDanhMuc .btn-cancel').click();
+            document.querySelectorAll('.index-' + index + ' td')[0].innerHTML = newName;
+            document.querySelectorAll('.index-' + index + ' td')[2].innerHTML = description;
+            document
+                .querySelector('main tr.index-0 td > button:nth-child(1)')
+                .setAttribute(
+                    'onclick',
+                    "editDanhMuc('" +
+                        newName +
+                         "','" +
+                        description +
+                        "','" +
+                        index +
+                        "')"
+                );
+        }
+    });
+}
+function removeDanhMuc(id) {
+    var x = confirm("Xác nhận xóa nhà cung cấp");
+    if(!x) return;
+    var settings = {
+        url: '/api/remove-categories',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            id: id,
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        alert(response.message);
+        if (response.status != 401) {
+            window.location.reload();
+        }
+    });
+}
+
+    {{!-- document.querySelectorAll(".app-menu li a.app-menu__item")[5].classList.add("active") --}}
+</script>

@@ -1,0 +1,246 @@
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<style>
+    .Choicefile {
+      display: block;
+      background: #14142B;
+      border: 1px solid #fff;
+      color: #fff;
+      width: 150px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 5px 0px;
+      border-radius: 5px;
+      font-weight: 500;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .Choicefile:hover {
+      text-decoration: none;
+      color: white;
+    }
+
+    #uploadfile,
+    .removeimg {
+      display: none;
+    }
+
+    #thumbbox {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .removeimg {
+      height: 25px;
+      position: absolute;
+      background-repeat: no-repeat;
+      top: 5px;
+      left: 5px;
+      background-size: 25px;
+      width: 25px;
+      /* border: 3px solid red; */
+      border-radius: 50%;
+
+    }
+
+    .removeimg::before {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      content: '';
+      border: 1px solid red;
+      background: red;
+      text-align: center;
+      display: block;
+      margin-top: 11px;
+      transform: rotate(45deg);
+    }
+
+    .removeimg::after {
+      /* color: #FFF; */
+      /* background-color: #DC403B; */
+      content: '';
+      background: red;
+      border: 1px solid red;
+      text-align: center;
+      display: block;
+      transform: rotate(-45deg);
+      margin-top: -2px;
+      
+    }
+    .ck-editor__editable_inline{
+      min-height: 200px;
+    }
+  </style>
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/quan-ly-san-pham"> Danh sách sản phẩm</a></li>
+        <li class="breadcrumb-item">Thêm sản phẩm</li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h3 class="tile-title">Thêm nhân viên</h3>
+          <div class="tile-body">
+            <form class="row">
+              <div class="form-group col-md-3">
+                <label class="control-label">Mã nhân viên </label>
+                <input id="input-id" class="form-control" type="text" placeholder="Nếu không nhập sẽ tự sinh" readonly value="{{nhanvien.id}}">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Tên Nhân viên</label>
+                <input id="input-name" class="form-control" type="text" value="{{nhanvien.name}}">
+              </div>
+              <div class="form-group  col-md-3">
+                <label class="control-label">Ngày sinh</label>
+                <input id="input-birthday" class="form-control" type="date" value="{{nhanvien.birthday}}">
+              </div>
+              <div class="form-group col-md-3 ">
+                <label for="input-status" class="control-label">Chức vụ</label>
+                <select id="input-chuc-vu" class="form-control" >
+                  <option value="-1">-- Chọn chức vụ --</option>
+                  <option value="Nhân viên bán hàng">Nhân viên bán hàng</option>
+                  <option value="Nhân viên tư vấn">Nhân viên tư vấn</option>
+                  <option value="Nhân viên Marketing">Nhân viên Marketing</option>
+                  <option value="Nhân viên quản lý kho">Nhân viên quản lý kho</option>
+                </select>
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Lương cơ bản</label>
+                <input id="input-luong" class="form-control" type="number" min="0" value="{{nhanvien.luong}}">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Số điện thoại</label>
+                <input id="input-phone" class="form-control" type="tel" value="{{nhanvien.phone}}">
+              </div>
+              <div class="form-group col-md-3">
+                <label class="control-label">Email</label>
+                <input id="input-email" class="form-control" type="email" value="{{nhanvien.email}}">
+              </div>
+               
+               <div class="form-group col-md-3">
+                <label class="control-label">SỐ CMNT/CCCD</label>
+                <input id="input-cccd" class="form-control" type="text" value="{{nhanvien.cccd}}" >
+              </div>
+               
+              <div class="form-group col-md-12">
+                <label class="control-label">Ảnh nhân viên</label>
+                <div id="my-image-upload" class="row">
+                  <div class="col img-demo mt-2">
+                    <img width="200" height="260" src="/admin/images/{{nhanvien.avatar}}">
+                  </div>
+                </div>
+                <div id="myfileupload">
+                  <input type="file" id="uploadfile" name="ImageUpload" onchange="readURL(this);"  accept="image/jpg, image/png, image/jpeg"/>
+                  <label class="Choicefile" for="uploadfile"><i class="fas fa-cloud-upload-alt"></i><span>Chọn ảnh</span></label>
+                </div>
+
+              </div>
+          </div>
+          <button class="btn btn-save" type="button" onclick="saveProduct()">Lưu lại</button>
+          <a class="btn btn-cancel" href="quan-ly-nhan-vien">Hủy bỏ</a>
+        </div>
+        </div>
+    </div>
+  </main>
+
+<script>
+
+
+var uploadImages = document.querySelectorAll('#my-image-upload img');
+  for (var i = 0; i < uploadImages.length; i++) {
+    ConvertImgToBase64(uploadImages[i]);
+  }
+  function ConvertImgToBase64(imageOld) {
+    var image = new Image();
+    image.crossOrigin = 'Anonymous';
+    image.onload = function () {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        canvas.height = this.naturalHeight;
+        canvas.width = this.naturalWidth;
+        context.drawImage(this, 0, 0);
+        var dataURL = canvas.toDataURL('image/jpeg');
+        imageOld.src = dataURL;
+    };
+    image.src = imageOld.src;
+}
+var arrSrc = [],
+    fileUpload = [];
+function readURL(input) {
+    for (var i = 0; i < input.files.length; i++) {
+        if (input.files && input.files[i]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var src = e.target.result;
+                for (var i = 0; i < arrSrc.length; i++) {
+                    if (arrSrc[i] == src) return;
+                }
+                arrSrc.push(src);
+                var a = document.querySelector('#my-image-upload');
+                a.innerHTML = ""
+                var div = document.createElement('div');
+                div.classList = 'col img-demo mt-2';
+                div.innerHTML = `<img width="200" height="260" src="${src}">`;
+                a.appendChild(div);
+            };
+            reader.readAsDataURL(input.files[i]);
+        }
+    }
+}
+function removeImage(event) {
+    event.parentElement.remove();
+}
+async function saveProduct() {
+    var form = new FormData();
+    var uploadImages = document.querySelectorAll('#my-image-upload img');
+    for (var i = 0; i < uploadImages.length; i++) {
+        var tmp = DataURIToBlob(uploadImages[i].src);
+        form.append('images', tmp);
+    }
+    var id = document.getElementById('input-id').value,
+        name = document.getElementById('input-name').value,
+        phone = document.getElementById('input-phone').value,
+        email = document.getElementById('input-email').value,
+        chucvu = document.getElementById('input-chuc-vu').value,
+        cccd = document.getElementById('input-cccd').value,
+        birthday = document.getElementById('input-birthday').value,
+        luong = document.getElementById('input-luong').value;
+
+    form.append('id', id);
+    form.append('name', name);
+    form.append('phone', phone);
+    form.append('email', email);
+    form.append('chucvu', chucvu);
+    form.append('cccd', cccd);
+    form.append('luong', luong);
+    form.append('birthday', birthday);
+    var settings = {
+        url: '/admin/edit-nhan-vien',
+        method: 'POST',
+        timeout: 0,
+        processData: false,
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        data: form,
+    };
+    $.ajax(settings)
+        .done((data) => {
+            data = JSON.parse(data);
+            var code = data.code,
+                message = data.message;
+            alert(message);
+            if (code != 401)
+              window.location = 'quan-ly-nhan-vien';
+        })
+        .fail((e) => {
+            console.log(e);
+            alert('Error!\nMessage: ' + e.message);
+        });
+}
+</script>

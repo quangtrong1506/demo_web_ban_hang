@@ -1,0 +1,145 @@
+<main class='app-content'>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div class='app-title'>
+                <ul class='app-breadcrumb breadcrumb'>
+                    <li class='breadcrumb-item'><a href='#'><b>Bảng điều khiển</b></a></li>
+                </ul>
+                <div id='clock'></div>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <!--Left-->
+        <div class='col-md-12 col-lg-12'>
+            <div class='row'>
+                <!-- col-6 -->
+                <div class='col-md-12 col-lg-6'>
+                    <div class='widget-small primary coloured-icon'><i
+                            class='icon bx bxs-user-account fa-3x'
+                        ></i>
+                        <div class='info'>
+                            <h4>Tổng khách hàng</h4>
+                            <p><b>{{userCount}} khách hàng</b></p>
+                            <p class='info-tong'>Tổng số khách hàng được quản lý.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- col-6 -->
+                <div class='col-md-12 col-lg-6'>
+                    <div class='widget-small info coloured-icon'><i
+                            class='icon bx bxs-data fa-3x'
+                        ></i>
+                        <div class='info'>
+                            <h4>Tổng sản phẩm</h4>
+                            <p><b>{{prodCount}} sản phẩm</b></p>
+                            <p class='info-tong'>Tổng số sản phẩm được quản lý.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- col-6 -->
+                <div class='col-md-12 col-lg-6'>
+                    <div class='widget-small warning coloured-icon'><i
+                            class='icon bx bxs-shopping-bags fa-3x'
+                        ></i>
+                        <div class='info'>
+                            <h4>Tổng đơn hàng</h4>
+                            <p><b>{{orderCount}} đơn hàng</b></p>
+                            <p class='info-tong'>Tổng số hóa đơn đã bán.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- col-6 -->
+                <div class='col-md-12 col-lg-6'>
+                    <div class='widget-small danger coloured-icon'><i
+                            class='icon bx bxs-error-alt fa-3x'
+                        ></i>
+                        <div class='info'>
+                            <h4>Sắp hết hàng</h4>
+                            <p><b>{{sapHetHangCount}} sản phẩm</b></p>
+                            <p class='info-tong'>Số sản phẩm cảnh báo hết cần nhập thêm.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- col-12 -->
+                <div class='col-md-12'>
+                    <div class='tile'>
+                        <h3 class='tile-title'>Đơn hàng mới</h3>
+                        <div>
+                            <table class='table table-bordered'>
+                                <thead>
+                                    <tr>
+                                        <th>ID đơn hàng</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each newOrders}}
+                                        <tr>
+                                            <td>#{{this.id}}</td>
+                                            <td>{{this.userName}}</td>
+                                            <td>{{this.totalText}}</td>
+                                            <td>
+                                                {{#if check.a}}
+                                                <span class='badge bg-success'>{{this.status}}</span>
+                                                {{/if}}
+                                                {{#if check.b}}
+                                                <span class='badge bg-info'>{{this.status}}</span>
+                                                {{/if}}
+                                                {{#if check.c}}
+                                                <span class='badge bg-warning'>{{this.status}}</span>
+                                                {{/if}}
+                                                {{#if check.d}}
+                                                <span class='badge bg-danger'>{{this.status}}</span>
+                                                {{/if}}
+
+                                            </td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- / div trống-->
+                    </div>
+                </div>
+                <!-- / col-12 -->
+                <!-- col-12 -->
+                <div class='col-md-12'>
+                    <div class='tile'>
+                        <h3 class='tile-title'>Khách hàng mới</h3>
+                        <div>
+                            <table class='table table-hover'>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Email</th>
+                                        <th>Số điện thoại</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each newUser}}
+                                    <tr>
+                                        <td>#{{this.id}}</td>
+                                        <td>{{this.name}}</td>
+                                        <td>{{this.email}}</td>
+                                        <td><span class='tag tag-success'>{{this.phone}}</span></td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- / col-12 -->
+            </div>
+        </div>
+    </div>
+
+</main>
+<script>
+    document.querySelectorAll(".app-menu li a.app-menu__item")[0].classList.add("active")
+</script>

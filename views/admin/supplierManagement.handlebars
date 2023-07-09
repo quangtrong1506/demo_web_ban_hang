@@ -1,0 +1,220 @@
+<main class='app-content'>
+  <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item">Quản lý nhà cung cấp</li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div class='tile'>
+                <h3 class='tile-title'>
+                  <div class="row element-button">
+                            <div class="col-sm-2">
+                              <button class="btn btn-add btn-sm"  title="Thêm" data-toggle="modal" data-target="#addNhaCungCap2"><i class="fas fa-plus" ></i>
+                                Thêm nhà cung cấp mới</button>
+                            </div>
+                          </div>
+                </h3>
+                <div>
+                    <table class='table table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Nhà cung cấp</th>
+                                <th>Địa chỉ</th>
+                                <th style="text-align: center;">Tổng sản phẩm</th>
+                                <th>Ghi chú</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each listSupplier}}
+                              <tr class="index-{{@index}}">
+                                <td>{{this.name}}</td>
+                                <td>{{this.address}}</td>
+                                <td width="30" style="text-align: center;">
+                                    {{this.count}}
+                                </td>
+                                <td><span>{{this.description}}</span></td>
+                                <td width="10">
+                                        <button class="btn btn-primary btn-sm" type="button" title="Sửa" data-toggle="modal" data-target="#editNhaCungCap" onclick="editNhaCungCap('{{this.name}}','{{this.address}}','{{this.description}}','{{@index}}')"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-primary btn-sm trash" type="button" title="Xóa" onclick="removeNhaCungCap('{{this._id}}')"><i class="fas fa-trash-alt" ></i></button>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- / div trống-->
+            </div>
+        </div>
+    </div>
+    
+</main>
+  <div class="modal fade" id="editNhaCungCap" tabindex="-1" role="dialog" aria-labelledby="editNhaCungCapTitle"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 20px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="padding: 30px; padding-top: 0;">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span style="display: inline-block;margin-top: 30px;">
+                <h5>Chỉnh sửa thông tin nhà cung cấp</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Tên nhà cung cấp</label>
+              <input class="form-control input-name" name="name" type="text" autocomplete="off" required>
+              <label class="control-label mt-2">Địa chỉ</label>
+              <input class="form-control input-address" type="text" autocomplete="off" name="address" >
+              <label class="control-label mt-2">Mô tả, ghi chú</label>
+              <input class="form-control input-description" type="text" autocomplete="off" name="description" >
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--
+MODAL
+-->
+<div class="modal fade" id="addNhaCungCap2" tabindex="-1" role="dialog" aria-labelledby="addNhaCungCapTitles"
+    data-backdrop="static" data-keyboard="false" style="padding-top: 20px;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content" style="padding: 30px; padding-top: 0;">
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-group  col-md-12">
+              <span style="display: inline-block;margin-top: 30px;">
+                <h5>Nhập thông tin nhà cung cấp</h5>
+              </span>
+            </div>
+            <div class="form-group col-md-12">
+              <label class="control-label">Tên nhà cung cấp</label>
+              <input class="form-control input-name" name="name" type="text" autocomplete="off" required>
+              <label class="control-label mt-2">Địa chỉ</label>
+              <input class="form-control input-address" type="text" autocomplete="off" name="address" >
+              <label class="control-label mt-2">Mô tả, ghi chú</label>
+              <input class="form-control input-description" type="text" autocomplete="off" name="description" >
+            </div>
+          </div>
+          <BR>
+          <button class="btn btn-save" onclick="saveNhaCungCap2()" type="button">Lưu lại</button>
+          <a class="btn btn-cancel" data-dismiss="modal" href="#">Hủy bỏ</a>
+          <BR>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  function editNhaCungCap(name, address, description, index) {
+    document.querySelector('#editNhaCungCap .input-name').value = name;
+    document.querySelector('#editNhaCungCap .input-address').value = address;
+    document.querySelector('#editNhaCungCap .input-description').value = description;
+    document
+        .querySelector('#editNhaCungCap .btn-save')
+        .setAttribute('onclick', "saveNhaCungCap('" + name + "','" + index + "')");
+}
+function saveNhaCungCap(name, index) {
+    var newName = document.querySelector('#editNhaCungCap .input-name').value;
+    var address = document.querySelector('#editNhaCungCap .input-address').value;
+    var description = document.querySelector('#editNhaCungCap .input-description').value;
+    var settings = {
+        url: '/api/edit-supplier',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            oldName: name,
+            name: newName,
+            address: address,
+            description: description,
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        alert(response.message);
+        if (response.status != 401) {
+            document.querySelector('#editNhaCungCap .btn-cancel').click();
+            document.querySelectorAll('.index-' + index + ' td')[0].innerHTML = newName;
+            document.querySelectorAll('.index-' + index + ' td')[1].innerHTML = address;
+            document.querySelectorAll('.index-' + index + ' td')[3].innerHTML = description;
+            document
+                .querySelector('main tr.index-0 td > button:nth-child(1)')
+                .setAttribute(
+                    'onclick',
+                    "editNhaCungCap('" +
+                        newName +
+                        "','" +
+                        address +
+                        "','" +
+                        description +
+                        "','" +
+                        index +
+                        "')"
+                );
+        }
+    });
+}
+function saveNhaCungCap2() {
+    var newName = document.querySelector('#addNhaCungCap2 .input-name').value;
+    var address = document.querySelector('#addNhaCungCap2 .input-address').value;
+    var description = document.querySelector('#addNhaCungCap2 .input-description').value;
+    var settings = {
+        url: '/api/add-supplier',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            name: newName,
+            address: address,
+            description: description,
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        alert(response.message);
+        if (response.status != 401) {
+            window.location.reload();
+        }
+    });
+}
+function removeNhaCungCap(id) {
+    var x = confirm("Xác nhận xóa nhà cung cấp");
+    if(!x) return;
+    var settings = {
+        url: '/api/remove-supplier',
+        method: 'POST',
+        timeout: 0,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+            id: id,
+        }),
+    };
+
+    $.ajax(settings).done(function (response) {
+        alert(response.message);
+        if (response.status != 401) {
+            window.location.reload();
+        }
+    });
+}
+
+    document.querySelectorAll(".app-menu li a.app-menu__item")[4].classList.add("active")
+</script>

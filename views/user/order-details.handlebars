@@ -1,0 +1,168 @@
+
+<section class="user-info"> 
+{{#if session.login}}
+<div class="container">
+    {{#if count}}
+    <div class="row ">
+        <div class="col-lg-3 col-sm-12">
+          <div class="nav">
+            <ul>
+              <li>
+                <a href="/user/thong-tin-ca-nhan">Thông tin cá nhân</a>
+              </li>
+              <li>
+                <a href="/user/mat-khau">Mật khẩu</a>
+              </li>
+              <li>
+                <a href="/user/gio-hang">Giỏ hàng</a>
+              </li>
+              <li>
+                <a href="/user/don-hang">Đơn hàng</a>
+              </li>
+              <li>
+                <a href="/user/dang-xuat">Đăng xuất</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-9 col-sm-12">
+          <h3>Chi tiết đơn hàng</h3>
+          <div class="row" style="margin-top: 30px;">
+            <div class="col-md-12">
+              <div class="card" style="width: calc(100% - 10px);">
+                <div class="card-header" style="font-size: 20px;">
+                  Thông tin cá nhân
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Họ & Tên: <span>{{order.userName}}</span></li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-6 col-12">Số điện thoại: {{order.phone}}</div>
+                      <div class="col-md-6 col-12">Email: {{order.email}}</div>
+                    </div>
+                  </li>
+                  <li class="list-group-item">Địa chỉ: {{order.xp}}, {{order.qh}}, {{order.tp}} </li>
+                  <li class="list-group-item">Địa chỉ cụ thể: {{order.address}}</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <h4 style="margin: 30px 0 10px 0;">Danh sách sản phẩm</h4>
+              <table class="table table-striped" style="width: calc(100% - 10px);">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên Sản phẩm</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                 {{#each order.products}}
+                  <tr>
+                    <th scope="row">{{inc @index}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.price}}</td>
+                    <td>{{this.quantity}}</td>
+                    <td>{{this.total}}</td>
+                  </tr>
+                 {{/each}}
+                 <tr>
+                    <th scope="row"> </th>
+                    <td></td>
+                    <td></td>
+                    <td style="text-align: right;">Tổng: </td>
+                    <td style="color: var(--price); font-size: 18px; font-weight: 400;">{{order.sum}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-md-12">
+              <div class="card" style="margin-top: 30px;">
+                <div class="card-header">
+                  <h4>Trạng thái đơn hàng</h4>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">Ngày tạo: <span style="color: black; font-weight: 300;">{{order.createdAt}}</span></p>
+                  <p class="card-text">Tổng tiền hàng: <span style="color: black; font-weight: 300;">{{order.sum}}</span></p>
+                  <p class="card-text">Giảm giá: <span style="color: black; font-weight: 300;">{{order.discount}}</span></p>
+                  <p class="card-text">Tiền vận chuyển: <span style="color: black; font-weight: 300;">{{order.ship}}</span></p>
+                  <p class="card-text">Thành tiền:<span style="color: black; font-weight: 300;"> {{order.total}}</span></p>
+                  <p class="card-text">Trạng thái: <span style="color: black; font-weight: 300;">{{order.status}}</span></p>
+                  <p class="card-text">Ghi chú: <span style="color: black; font-weight: 300;">{{order.note}}</span></p>
+                  {{#if order.canCancel}}
+                  <a href="javascript:" onclick="huyDH('{{order.id}}')" class="btn " style="background-color: red; color: white;">Hủy đơn hàng</a>
+                  {{/if}}
+                  {{#if order.canConfirm}}
+                  <a href="javascript:" onclick="confirmDH('{{order.id}}')" class="btn " style="background-color: green; color: white;">Xác nhận đã nhận được hàng</a>
+                  {{/if}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {{else}}
+   
+    <div class="row">
+        <h3 class="col col-12" style="text-align: center;">Đơn hàng này không tồn tại</h3>
+        <div class="col col-12" style="text-align: center; margin-top: 15px;">
+            <a href="/san-pham" class="primary-btn cart-btn" >Tiếp tục mua sắm</a>
+        </div>
+    </div>
+    {{/if}}   
+</div>
+    
+{{else}}
+<div class="container">
+    <div class="row">
+    <h3 class="col col-12" style="text-align: center;">Vui lòng đăng nhập để xem đơn hàng của bạn</h3>
+    <div class="col" style="text-align: center;">
+        <br>
+        <button class="btn" style="border: 1px solid #979797;" onclick="loginInHeader()">
+        Đăng nhập
+        </button>
+    </div>
+    </div>
+</div>
+{{/if}}
+</section>
+  <style>
+    .my-orders {
+      width: calc(100% - 40px);
+      margin: 30px 10px
+    }
+
+    .my-orders .header {
+      font-size: 20px;
+      background-color: white !important;
+      border-bottom: 1px solid rgb(126, 126, 126) !important;
+    }
+
+    .my-orders tr {
+      margin: 10px 0;
+    }
+
+    .my-orders tr:nth-child(odd) {
+      background-color: rgb(223, 223, 223);
+    }
+
+    .my-orders td,
+    .my-orders th {
+      text-align: center;
+      flex: 1;
+    }
+
+    .name-product {
+      max-width: 100%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .my-orders a:hover {
+      text-decoration: underline !important;
+    }
+  </style>

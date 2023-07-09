@@ -1,0 +1,81 @@
+<main class='app-content'>
+    <div class='app-title'>
+        <ul class='app-breadcrumb breadcrumb side'>
+            <li class='breadcrumb-item active'><a href='#'><b>Thống kê</b></a></li>
+        </ul>
+        <div id='clock'></div>
+    </div>
+    <div class='row'>
+        <div class="col-lg-12 col-sm-12">
+          <div class="row" style="margin-top: 30px;">
+            <div class="col-md-12">
+              <div class="card" style="width: calc(100% - 10px);">
+                <div class="card-header" style="font-size: 20px;">
+                  <div class="row">
+                    <div class="col col-md-9 header-text"></div>
+                    <div class="col col-md-3">
+                      <select name="" id="select-tk">
+                        <option value="month">Tháng này</option>
+                        <option value="year">Năm nay</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item"><b class="b-dt-text">Doanh thu tháng này:</b> <span style="color: red;">{{tongtien}}</span></li>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-md-6 col-12"><b>Tổng đơn hàng mới:</b> <span style="color: green;">{{countDH}}</span></div>
+                      <div class="col-md-6 col-12"><b>Tổng khách hàng mới:</b> <span style="color: green;">{{countKH}}</span></div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <h4 style="margin: 30px 0 10px 0;">Sản phẩm bán chạy nhất</h4>
+              <table class="table table-striped" style="width: calc(100% - 10px);">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Tên Sản phẩm</th>
+                    <th scope="col">Số lượng đã bán</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each prodBC}}
+                  <tr>
+                    <th scope="row">{{inc @index}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.count}}</td>
+                    <td><a href="/admin/chinh-sua-san-pham?id={{this.id}}" style="color: blue;">Xem chi tiết</a></td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    </div>
+</main>
+{{!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
+<script>
+  document.getElementById("select-tk").addEventListener("change",()=>{
+    const tk = document.getElementById("select-tk").value;
+    location.href = "/admin/thong-ke?s="+tk
+  })
+  if (location.href.match("year"))
+    {
+      document.querySelector(".b-dt-text").innerHTML = "Doanh thu năm nay: ";
+      document.querySelectorAll("#select-tk option")[1].selected = "selected";
+      document.querySelector(".header-text").innerHTML = "Tổng thu năm: "+new Date().getFullYear();
+    }
+  else
+    {
+      document.querySelector(".b-dt-text").innerHTML = "Tổng doanh thu tháng nay: ";
+      document.querySelector(".header-text").innerHTML ="Tổng thu tháng: "+(new Date().getMonth()+1) +"/"+ new Date().getFullYear();
+    }
+
+
+</script>

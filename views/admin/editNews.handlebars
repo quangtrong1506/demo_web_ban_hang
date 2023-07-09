@@ -1,0 +1,192 @@
+<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+<style>
+    .Choicefile {
+      display: block;
+      background: #14142B;
+      border: 1px solid #fff;
+      color: #fff;
+      width: 150px;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 5px 0px;
+      border-radius: 5px;
+      font-weight: 500;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .Choicefile:hover {
+      text-decoration: none;
+      color: white;
+    }
+
+    #uploadfile,
+    .removeimg {
+      display: none;
+    }
+
+    #thumbbox {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .ck-editor__editable_inline{
+      min-height: 300px;
+    }
+  </style>
+  <main class="app-content">
+    <div class="app-title">
+      <ul class="app-breadcrumb breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/quan-ly-bai-viet"> Danh sách bài viết</a></li>
+        <li class="breadcrumb-item">chỉnh sửa bài viết</li>
+      </ul>
+      <div id="clock"></div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" >
+        <div class="row">
+          <div class="col col-md-12">
+            <div class="tile">
+              <div class="form-group">
+                <h3 for="title">Tiêu đề bài viết</h3>
+                <input type="text" class="form-control" id="title" placeholder="Tiêu đề ..." value="{{news.title}}">
+              </div>
+              <div class="form-group">
+                <h4 class="control-label">Ảnh minh họa</h4>
+                <div id="my-image-upload" class="row"><div class=" img-demo mt-2" id="my-image-view">
+                    <img width="300" src="/images/news/{{news.image}}">
+                  </div></div>
+                <div id="myfileupload">
+                  <input type="file" id="uploadfile" name="ImageUpload" onchange="readURL(this);"  accept="image/jpg, image/png, image/jpeg"/>
+                  <label class="Choicefile" for="uploadfile"><i class="fas fa-cloud-upload-alt"></i><span> Chọn ảnh</span></label>
+                </div>
+              </div>
+              <div class="form-group">
+                <h4 class="control-label">Chi tiết bài viết</h4>
+                <div id="mota" style="display: none;">{{{news.content}}}</div>
+              </div>
+                <button type="button" class="btn btn-info" onclick="saveNews('{{news.id}}')">Đăng</button>
+                <button type="button" class="btn btn-danger" onclick="location.href = '/admin/quan-ly-bai-viet'">Hủy bỏ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+<script>
+
+var arrSrc = [],
+    fileUpload = [];
+function readURL(input) {
+  if (input.files) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+          var src = e.target.result;
+
+          for (var i = 0; i < arrSrc.length; i++) {
+              if (arrSrc[i] == src) return;
+          }
+          arrSrc.push(src);
+          document.querySelector('#my-image-view img').src = src;
+      };
+      reader.readAsDataURL(input.files[0]);
+  }
+}
+var mota = null;
+ClassicEditor.create(document.querySelector('#mota'), {
+    ckfinder: {
+        uploadUrl: '/api/upload-images-ck-editor',
+    },
+    language: {
+            ui: 'vi',
+        },
+})
+    .then((editor) => {
+        window.editor = editor;
+        mota = editor;
+        editor.setData(document.getElementById('mota').innerHTML);
+        editor.model.document.on( 'change:data', () => {
+                var imageCK = document.querySelectorAll(
+              'div.ck.ck-reset.ck-editor.ck-rounded-corners > div.ck.ck-editor__main > div img'
+          );
+          for (var i = 0; i < imageCK.length; i++) {
+            if (!imageCK[i].src.match('data:image/')) 
+            ConvertImgToBase64(imageCK[i]);
+          }
+          console.log("CK editor changed")
+          } );
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+
+async function saveNews(id) {
+    var form = new FormData();
+    var imageCK = document.querySelectorAll(
+        'div.ck.ck-reset.ck-editor.ck-rounded-corners > div.ck.ck-editor__main > div img'
+    );
+    var uploadImages = document.querySelectorAll('#my-image-upload img');
+    for (var i = 0; i < uploadImages.length; i++) {
+        var tmp = DataURIToBlob(uploadImages[i].src);
+        form.append('images', tmp);
+    }
+
+    for (var i = 0; i < imageCK.length; i++) {
+        if (imageCK[i].src.search('data:image/') != -1) {
+            var tmp = DataURIToBlob(imageCK[i].src);
+            form.append('imageCKs', tmp);
+        } else
+            {
+              imageCK[i].setAttribute("crossorigin","anonymous");
+              var base = getBase64Image(imageCK[i]);
+              var blob = DataURIToBlob(base);
+              form.append('imageCKs', blob);
+            }
+    }
+    var title = document.getElementById('title').value;
+    form.append('title', title);
+    form.append('id', id);
+    form.append('content', mota.getData());
+    var settings = {
+        url: '/admin/edit-news',
+        method: 'POST',
+        timeout: 0,
+        processData: false,
+        mimeType: 'multipart/form-data',
+        contentType: false,
+        data: form,
+    };
+    $.ajax(settings)
+        .done((data) => {
+            data = JSON.parse(data);
+            var code = data.code,
+                message = data.message;
+                var icon = code == 401 ? "error" : "success";
+                Swal.fire({
+                  title:message,
+                  icon:icon
+                }).then(()=>{
+                    if (code != 401)
+                      window.location = 'quan-ly-bai-viet';
+                })
+        })
+        .fail((e) => {
+            console.log(e);
+            alert('Error!Message: ' + e.message);
+        });
+}
+window.onload = () => {
+      var imageCK = document.querySelectorAll('div.ck.ck-reset.ck-editor.ck-rounded-corners > div.ck.ck-editor__main > div img');
+      var uploadImages = document.querySelectorAll('#my-image-upload img');
+      for (var i = 0; i < uploadImages.length; i++) {
+          ConvertImgToBase64(uploadImages[i]);
+        }
+        for (var i = 0; i < imageCK.length; i++) {
+          ConvertImgToBase64(imageCK[i]);
+        }
+}
+</script>

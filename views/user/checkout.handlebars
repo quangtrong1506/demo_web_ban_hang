@@ -1,0 +1,203 @@
+<section class="checkout">
+        {{#if session.login}}
+        {{#if count}}
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h6><span class="icon_tag_alt"></span>Bạn có mã giảm giá? <a class="click-here" href="/user/gio-hang#ma-giam-gia">Click
+                            here</a> để nhập mã giảm
+                        giá
+                    </h6>
+                </div>
+            </div>
+            <div class="checkout__form">
+                <h4>Chi tiết thanh toán</h4>
+                <form action="#">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-6">
+                            <div class="row">
+                                
+                                <div class="col-lg-12">
+                                    <div class="checkout__input">
+                                        <p>Tên<span>*</span></p>
+                                        <input type="text" name="name" id="name" value="{{session.userInfo.name}}" placeholder="Họ & Tên">
+                                    </div>
+                                </div>
+                            </div>
+                            <p>Địa chỉ nhận hàng</p>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="checkout__input">
+                                        <p>Tỉnh/Thành phố<span>*</span></p>
+                                        <select class="select-tinh-thanh-pho" name="tinhthanhpho" id="select-tinh-thanh-pho">
+                                            <option data-display="Lựa chọn tỉnh/Thành phố" value="-1">Chưa chọn</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="checkout__input">
+                                        <p>Quận/huyện<span>*</span></p>
+                                        <select class="select-quan-huyen" name="quanhuyen" id="select-quan-huyen">
+                                            <option value="-1">Chưa lựa chọn</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="checkout__input">
+                                        <p>Xã phường<span>*</span></p>
+                                        <select class="select-xa-phuong" name="xaphuong" id="select-xa-phuong">
+                                            <option value="-1">Chưa lựa chọn</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="checkout__input">
+                                <br>
+                                <p>Địa chỉ chi tiết<span>*</span></p>
+                                <input type="text" id="address" name="address" placeholder="Số nhà, quận huyện, Tỉnh, Thành Phố" class="checkout__input__add" value="{{session.userInfo.address}}">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Số điện thoại<span>*</span></p>
+                                        <input type="tel" id="phone" name="phone" value="{{session.userInfo.phone}}"  placeholder="Số điện thoại">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="checkout__input">
+                                        <p>Email</p>
+                                        <input type="email" id="email" name="email" value="{{session.userInfo.email}}" placeholder="Email">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkout__input">
+                                <p>Ghi chú</p>
+                                <input type="text" id="note" placeholder="Thời gian giao hàng ...">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="checkout__order">
+                                <h4>Thông tin hóa đơn</h4>
+                                <div class="checkout__order__products">Sản phẩm <span>Thành tiền</span></div>
+                                <ul>
+                                    {{#each cart}}
+                                        <li><label>{{this.name}}</label><span>{{this.total}}</span></li>
+                                    {{/each}}
+                                </ul>
+                                <div class="checkout__order__subtotal">Tổng tiền hàng <span id="tong-tien-hang">{{total}}</span></div>
+                                <div class="checkout__order__coupons">Giảm giá<span id="discount" data-code="{{code}}">-{{discount}}</span></div>
+                                <div class="checkout__order__transport-fee">Phí vận chuyển <span class="tien-ship">{{ship}}</span></div>
+                                <div class="checkout__order__total">Thanh toán <span id="tien-thanh-toan">{{pay}}</span></div>
+                                <div class="checkout__input__checkbox">
+                                    {{!-- <label for="acc-or">
+                                        In hóa đơn?
+                                        <input type="checkbox" id="acc-or">
+                                        <span class="checkmark"></span>
+                                    </label> --}}
+                                </div>
+                                <button type="button" class="site-btn" onclick="datHang()">Đặt hàng</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{else}}
+        <div class="container">
+          <div class="row">
+            <h3 class="col col-12" style="text-align: center;">Bạn không có sản phẩm nào trong giỏ hàng</h3>
+            <div class="col" style="text-align: center;">
+              <br>
+              <a class="btn" style="border: 1px solid #979797;" href="/san-pham">
+               Tiếp tục mua sắm
+              </a>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+        {{else}}
+        <div class="container">
+          <div class="row">
+            <h3 class="col col-12" style="text-align: center;">Vui lòng đăng nhập lại</h3>
+            <div class="col" style="text-align: center;">
+              <br>
+              <button class="btn" style="border: 1px solid #979797;" onclick="loginInHeader()">
+               Đăng nhập
+              </button>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+    </section>
+    <script>
+        var products = [];
+       {{#each cart}}
+            products.push({
+                id:'{{this.id}}',
+                quantity:{{this.quantity}}
+            })
+        {{/each}}
+
+        function datHang(){
+            var name = document.getElementById("name").value;
+            var phone = document.getElementById("phone").value;
+            var email = document.getElementById("email").value;
+            var address = document.getElementById("address").value;
+            var note = document.getElementById("note").value;
+            var tinhthanhpho = document.querySelector(".nice-select.select-tinh-thanh-pho span.current").innerHTML;
+            var quanhuyen = document.querySelector(".nice-select.select-quan-huyen span.current ").innerText;
+            var xaphuong= document.querySelector(".nice-select.select-xa-phuong span.current").innerText;
+            var code = document.getElementById("discount").getAttribute("data-code")||"";
+            tinhthanhpho = tinhthanhpho.match("Lựa chọn") ?"-1":tinhthanhpho
+            quanhuyen = quanhuyen.match("Lựa chọn") ?"-1":quanhuyen
+            xaphuong = xaphuong.match("Lựa chọn") ?"-1":xaphuong
+            var settings = {
+                url: '/user/checkout',
+                method: 'POST',
+                timeout: 0,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify({
+                    code: code.toUpperCase(),
+                    name:name,
+                    phone:phone,
+                    email:email,
+                    address:address,
+                    note:note,
+                    tinhthanhpho:tinhthanhpho,
+                    quanhuyen:quanhuyen,
+                    xaphuong:xaphuong,
+                    cart:products
+                }),
+            };
+
+            $.ajax(settings).done(function (response) {
+                var icon = response.code == 401 ? "error" : "success";
+                Swal.fire({
+                    title: 'Thông báo',
+                    icon: icon,
+                    html:response.message,
+                    focusConfirm: true,
+                    confirmButtonText:
+                        'Xác nhận',
+                    }).then((result)=>{
+                        if (result.isConfirmed){
+                            if(response.message.match("thành công"))
+                            return location.href = "/user/chi-tiet-don-hang?id="+response.cartId
+                            if(response.message.match("đã thanh toán"))
+                            return location.href = "/user/don-hang"
+                            if(response.message.match("đăng nhập lại"))
+                            loginInHeader()
+                        }
+                    })
+            });
+        }
+    </script>
+    <style>
+        .nice-select.open .list{
+            max-height: 300px;
+            overflow-y: scroll !important;
+        }
+    </style>
