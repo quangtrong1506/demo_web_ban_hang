@@ -7,7 +7,8 @@
         "node": "14.x"
     },
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "startdev": "nodemon index.js"
     },
     "author": "Quang Trong",
     "license": "ISC",
@@ -21,7 +22,7 @@
         "express-handlebars": "^6.0.6",
         "express-session": "^1.17.3",
         "fs-extra": "^11.1.0",
-        "mongodb": "^4.8.0",
+        "mongodb": "^4.16.0",
         "mongoose": "^6.5.0",
         "mongoose-slug-generator": "^1.0.4",
         "nodemailer": "^6.9.1",
