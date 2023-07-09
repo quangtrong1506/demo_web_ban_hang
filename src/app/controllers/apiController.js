@@ -688,6 +688,9 @@ class apiController {
         });
         res.json({ message: 'Bạn đã đăng ký thành công' });
     }
+    Test(req, res, next) {
+        res.send('Hi');
+    }
     error(req, res, next) {
         res.json({
             code: 404,

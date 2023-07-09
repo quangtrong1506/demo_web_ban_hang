@@ -40,7 +40,7 @@ router.use('/api/add-subscriber', apiController.addSubscriber);
 
 //? up ảnh tạm cho ck-editor // fileUploadTemp
 router.use('/api/upload-images-ck-editor', apiController.fileUploadTemp);
-// router.use('/api/add-product', apiController.addProduct);
+router.use('/api/test', apiController.Test);
 
 // Lỗi
 router.use('/api/:slug', apiController.error);
