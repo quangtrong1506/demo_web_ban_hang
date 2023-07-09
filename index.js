@@ -23,8 +23,8 @@ db.connect();
 //set view engine
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', path.join('/var/task/views'));
-console.log(path.join('/var/task/views'));
+app.set('views', 'views');
+console.log('views');
 // path.dirname(__dirname)
 // set public directory
 app.use(express.static(path.join('/public')));
