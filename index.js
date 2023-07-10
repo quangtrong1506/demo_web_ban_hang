@@ -24,8 +24,6 @@ db.connect();
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', appRoot + '/views');
-// app.set('views', '/var/task/views');
-// set public directory path.join('/var/task/views')
 app.use(express.static(appRoot + '/public'));
 
 //router
