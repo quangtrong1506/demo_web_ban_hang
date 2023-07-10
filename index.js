@@ -23,7 +23,7 @@ db.connect();
 //set view engine
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', appRoot + '/views');
+app.set('views', appRoot + '/src/views');
 app.use(express.static(appRoot + '/public'));
 
 //router
